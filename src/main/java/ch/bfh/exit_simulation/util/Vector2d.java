@@ -1,5 +1,6 @@
 package ch.bfh.exit_simulation.util;
 
+import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -22,6 +23,8 @@ public class Vector2d {
     public Vector2d(Vector2d v) {
         this(v.x, v.y);
     }
+
+    public Vector2d(Point p) {this(p.getX(), p.getY());}
 
     /**
      * Calculates the magnitude (length) of the vector.
