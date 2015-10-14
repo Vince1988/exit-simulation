@@ -8,6 +8,8 @@ import java.util.Objects;
  */
 public class Vector2d {
 
+    public static final Vector2d ZERO = new Vector2d();
+
     private final double x;
     private final double y;
 
@@ -54,8 +56,24 @@ public class Vector2d {
         return this.add(v.negate());
     }
 
+    public Vector2d div(double scalar) {
+        return new Vector2d(this.getX() / scalar, this.getY() / scalar);
+    }
+
     public double dot(Vector2d v) {
         return (this.getX() * v.getX()) + (this.getY() * v.getY());
+    }
+
+    public Vector2d normalize() {
+        double m = this.magnitude();
+        return m > 0 ? this.div(m) : ZERO;
+    }
+
+    public Vector2d reflect(Vector2d v) {
+        Vector2d n = v.normalize();
+        double dot = this.dot(n);
+
+        return n.scale(2 * dot).sub(this);
     }
 
     public Vector2d copy() {
