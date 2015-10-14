@@ -2,6 +2,7 @@ package ch.bfh.exit_simulation.controller;
 
 import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.model.Ball;
+import ch.bfh.exit_simulation.util.Vector2d;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
@@ -16,28 +17,23 @@ public class BallController implements Controller {
 
     @Override
     public void update() {
-        ball.setLastX(ball.getCurrentX());
-        ball.setLastY(ball.getCurrentY());
+        ball.setLastPos(ball.getCurrentPos());
+        ball.setCurrentPos(ball.getCurrentPos().add(ball.getSpeed()));
 
-        ball.setCurrentX(ball.getCurrentX() + ball.getSpeedX());
-        ball.setCurrentY(ball.getCurrentY() + ball.getSpeedY());
-
-        if (ball.getCurrentX() + ball.getRadius() / 2 >= SimulationCanvas.W) {
-            ball.setSpeedX(ball.getSpeedX() * -1);
-            ball.setCurrentX(SimulationCanvas.W - ball.getRadius() / 2);
-//            ball.setSpeedY((float) Math.random() * ball.getSpeed() * 2 - ball.getSpeed());
-        } else if (ball.getCurrentX() - ball.getRadius() / 2 <= 0) {
-            ball.setSpeedX(ball.getSpeedX() * -1);
-            ball.setCurrentX(ball.getRadius() / 2);
+        if (ball.getCurrentPos().getX() + ball.getRadius() / 2 >= SimulationCanvas.W) {
+            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
+            ball.setCurrentPos(new Vector2d(SimulationCanvas.W - ball.getRadius(), ball.getCurrentPos().getY()));
+        } else if (ball.getCurrentPos().getX() - ball.getRadius() <= 0) {
+            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
+            ball.setCurrentPos(new Vector2d(ball.getRadius(), ball.getCurrentPos().getY()));
         }
 
-        if (ball.getCurrentY() + ball.getRadius() / 2 >= SimulationCanvas.H) {
-            ball.setSpeedY(ball.getSpeedY() * -1);
-            ball.setCurrentY(SimulationCanvas.H - ball.getRadius() / 2);
-//            ball.setSpeedX((float) Math.random() * ball.getSpeed() * 2 - ball.getSpeed());
-        } else if (ball.getCurrentY() - ball.getRadius() / 2 <= 0) {
-            ball.setSpeedY(ball.getSpeedY() * -1);
-            ball.setCurrentY(ball.getRadius() / 2);
+        if (ball.getCurrentPos().getY() + ball.getRadius() >= SimulationCanvas.H) {
+            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
+            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), SimulationCanvas.H - ball.getRadius()));
+        } else if (ball.getCurrentPos().getY() - ball.getRadius() <= 0) {
+            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
+            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), ball.getRadius()));
         }
     }
 }
