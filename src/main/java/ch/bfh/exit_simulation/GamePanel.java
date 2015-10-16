@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
@@ -27,11 +28,12 @@ public class GamePanel {
     public GamePanel() {
         this.balls = new HashSet<>();
         this.obstacles = new HashSet<>();
-        for (int i = 0; i < 50; i++) {
-            this.balls.add(Ball.createRandomBall());
-        }
-        this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
 
+//        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
+//        IntStream.range(0,50).forEach(x -> this.balls.add(Ball.createRandomBall()));
+        this.balls.addAll(Ball.createCardinalBalls());
+
+        this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
     }
 
     private int rndColor() {
@@ -39,6 +41,14 @@ public class GamePanel {
     }
 
     public void update() {
+        List<Ball> ballsToCheck = new ArrayList<>(this.balls);
+
+        for (Ball b : this.balls) {
+            ballsToCheck.remove(b);
+            ballsToCheck.forEach(x -> b.elasticCollision(x));
+        }
+
+
         this.balls.forEach(ball -> new BallController(ball).update());
     }
 
