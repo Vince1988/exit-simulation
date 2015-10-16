@@ -103,36 +103,42 @@ public class Ball {
     }
 
     public void elasticCollision(Ball b2) {
-        double d = this.currentPos.sub(b2.currentPos).magnitude();
-        if (d <= b2.getRadius() + this.getRadius()) {
+        //TODO: Improve! code duplication...
+        Vector2d distance = this.currentPos.sub(b2.currentPos);
 
+        if (distance.magnitude() <= b2.getRadius() + this.getRadius()) {
+            Vector2d relativeSpeed = b2.speed.sub(this.speed);
+            double dot = distance.dot(relativeSpeed);
 
-            Vector2d n = this.currentPos.sub(b2.currentPos);
-            Vector2d un = n.normalize();
-            Vector2d ut = new Vector2d(-un.getY(), un.getX());
+            if (dot > 0) {
 
-            Vector2d v1 = this.getSpeed();
-            Vector2d v2 = b2.getSpeed();
+                Vector2d n = this.currentPos.sub(b2.currentPos);
+                Vector2d un = n.normalize();
+                Vector2d ut = new Vector2d(-un.getY(), un.getX());
 
-            double v1t = ut.dot(v1);
-            double v2t = ut.dot(v2);
-            double v1n = un.dot(v1);
-            double v2n = un.dot(v2);
+                Vector2d v1 = this.getSpeed();
+                Vector2d v2 = b2.getSpeed();
 
-            double v1n_new = (v1n * (this.getRadius() - b2.getRadius()) + 2 * b2.getRadius() * v2n) / (this.getRadius() + b2.getRadius());
-            double v2n_new = (v2n * (b2.getRadius() - this.getRadius()) + 2 * this.getRadius() * v1n) / (this.getRadius() + b2.getRadius());
+                double v1t = ut.dot(v1);
+                double v2t = ut.dot(v2);
+                double v1n = un.dot(v1);
+                double v2n = un.dot(v2);
 
-            Vector2d v1n_vec = un.scale(v1n_new);
-            Vector2d v2n_vec = un.scale(v2n_new);
+                double v1n_new = (v1n * (this.getRadius() - b2.getRadius()) + 2 * b2.getRadius() * v2n) / (this.getRadius() + b2.getRadius());
+                double v2n_new = (v2n * (b2.getRadius() - this.getRadius()) + 2 * this.getRadius() * v1n) / (this.getRadius() + b2.getRadius());
 
-            Vector2d v1t_vec = ut.scale(v1t);
-            Vector2d v2t_vec = ut.scale(v2t);
+                Vector2d v1n_vec = un.scale(v1n_new);
+                Vector2d v2n_vec = un.scale(v2n_new);
 
-            Vector2d v1_new = v1n_vec.add(v1t_vec);
-            Vector2d v2_new = v2n_vec.add(v2t_vec);
+                Vector2d v1t_vec = ut.scale(v1t);
+                Vector2d v2t_vec = ut.scale(v2t);
 
-            this.setSpeed(v1_new);
-            b2.setSpeed(v2_new);
+                Vector2d v1_new = v1n_vec.add(v1t_vec);
+                Vector2d v2_new = v2n_vec.add(v2t_vec);
+
+                this.setSpeed(v1_new);
+                b2.setSpeed(v2_new);
+            }
         }
     }
 }
