@@ -4,6 +4,8 @@ import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -11,7 +13,7 @@ import java.util.stream.IntStream;
 /**
  * Created by Shylux on 13.10.2015.
  */
-public class ObstaclePoly extends Polygon {
+public class ObstaclePoly extends Polygon implements IObstacle {
 
 
     public Point centerPoint() {
@@ -31,13 +33,54 @@ public class ObstaclePoly extends Polygon {
         }
         return lst;
     }
-    public static ObstaclePoly createDemoObstacle() {
+    public List<Line2D> getBorderLines() {
+        List<Line2D> lst = new ArrayList<>();
+        for (int i = 0; i < this.npoints; i++) {
+            Point2D a = new Point2D.Double(this.xpoints[i], this.ypoints[i]);
+            int j = (i+1)%this.npoints;
+            Point2D b = new Point2D.Double(this.xpoints[j], this.ypoints[j]);
+            lst.add(new Line2D.Double(a, b));
+        }
+        return lst;
+    }
+
+    @Override
+    public boolean collides(Line2D line) {
+        for (Line2D border: this.getBorderLines()) {
+            if (line.intersectsLine(border))
+                return true;
+        }
+        return false;
+    }
+
+    public static List<ObstaclePoly> createDemoObstacles() {
+        ArrayList<ObstaclePoly> lst = new ArrayList<ObstaclePoly>();
         ObstaclePoly op = new ObstaclePoly();
-        op.addPoint(new Double(SimulationCanvas.W*.35).intValue(), new Double(SimulationCanvas.H*.35).intValue());
-        op.addPoint(new Double(SimulationCanvas.W*.45).intValue(), new Double(SimulationCanvas.H*.65).intValue());
-        op.addPoint(new Double(SimulationCanvas.W*.75).intValue(), new Double(SimulationCanvas.H*.55).intValue());
-        op.addPoint(new Double(SimulationCanvas.W*.55).intValue(), new Double(SimulationCanvas.H*.35).intValue());
-        op.addPoint(new Double(SimulationCanvas.W*.50).intValue(), new Double(SimulationCanvas.H*.25).intValue());
-        return op;
+        op.addRelativePoint(.35, .35);
+        op.addRelativePoint(.45, .65);
+        op.addRelativePoint(.65, .55);
+        op.addRelativePoint(.55, .35);
+        op.addRelativePoint(.50, .30);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.85, .05);
+        op.addRelativePoint(.95, .10);
+        op.addRelativePoint(.90, .15);
+        op.addRelativePoint(.85, .10);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.80, .75);
+        op.addRelativePoint(.90, .80);
+        op.addRelativePoint(.80, .60);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.70, .20);
+        op.addRelativePoint(.95, .25);
+        op.addRelativePoint(.70, .30);
+        lst.add(op);
+        return lst;
+    }
+    private void addRelativePoint(double x, double y) {
+        this.addPoint(new Double(SimulationCanvas.W * x).intValue(), new Double(SimulationCanvas.H*y).intValue());
     }
 }
