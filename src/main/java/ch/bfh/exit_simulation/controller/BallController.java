@@ -20,7 +20,7 @@ public class BallController implements Controller {
         ball.setLastPos(ball.getCurrentPos());
         ball.setCurrentPos(ball.getCurrentPos().add(ball.getSpeed()));
 
-        if (ball.getCurrentPos().getX() + ball.getRadius() / 2 >= SimulationCanvas.W) {
+        if (ball.getCurrentPos().getX() + ball.getRadius() >= SimulationCanvas.W) {
             ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
             ball.setCurrentPos(new Vector2d(SimulationCanvas.W - ball.getRadius(), ball.getCurrentPos().getY()));
         } else if (ball.getCurrentPos().getX() - ball.getRadius() <= 0) {
