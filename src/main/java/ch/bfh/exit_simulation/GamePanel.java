@@ -7,15 +7,14 @@ import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.view.BallRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Set;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
@@ -24,6 +23,7 @@ public class GamePanel {
 
     private Set<Ball> balls;
     private Set<ObstaclePoly> obstacles;
+    private List<Line2D> obstacleNavLineCache;
 
     public GamePanel() {
         this.balls = new HashSet<>();
@@ -36,20 +36,13 @@ public class GamePanel {
         this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
     }
 
-    private int rndColor() {
-        return (int) (Math.random()  * 255);
-    }
-
     public void update() {
+        this.balls.forEach(ball -> new BallController(ball).update());
         List<Ball> ballsToCheck = new ArrayList<>(this.balls);
-
         for (Ball b : this.balls) {
             ballsToCheck.remove(b);
-            ballsToCheck.forEach(x -> b.elasticCollision(x));
+            ballsToCheck.forEach(ball -> new BallController(b).elasticCollision(ball));
         }
-
-
-        this.balls.forEach(ball -> new BallController(ball).update());
     }
 
     public void render(Graphics2D g, float interpolation) {
@@ -59,7 +52,6 @@ public class GamePanel {
         getObstacleNavigationLines().forEach(line -> g.draw(line));
     }
 
-    private List<Line2D> obstacleNavLineCache;
     public List<Line2D> getObstacleNavigationLines() {
         if (obstacleNavLineCache != null)
             return obstacleNavLineCache;
@@ -68,14 +60,14 @@ public class GamePanel {
         ArrayList<Point> navPoints = new ArrayList<>();
         this.obstacles.forEach(obstacle -> navPoints.addAll(obstacle.getNavigationPoints()));
         for (int i = 0; i < navPoints.size(); i++) {
-            for (int j = i+1; j < navPoints.size(); j++) {
+            for (int j = i + 1; j < navPoints.size(); j++) {
                 lst.add(new Line2D.Double(navPoints.get(i), navPoints.get(j)));
             }
         }
         ArrayList<Line2D> collFreeList = new ArrayList<>();
-        for (Line2D line: lst) {
+        for (Line2D line : lst) {
             boolean collides = false;
-            for (IObstacle obst: this.obstacles) {
+            for (IObstacle obst : this.obstacles) {
                 if (obst.collides(line)) {
                     collides = true;
                     break;

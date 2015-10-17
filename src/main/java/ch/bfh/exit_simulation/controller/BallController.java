@@ -36,4 +36,46 @@ public class BallController implements Controller {
             ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), ball.getRadius()));
         }
     }
+
+    public void elasticCollision(Ball b) {
+        Ball a = this.ball;
+
+        //TODO: Improve! code duplication...
+        Vector2d distance = a.getCurrentPos().sub(b.getCurrentPos());
+
+        if (distance.magnitude() <= b.getRadius() + a.getRadius()) {
+            Vector2d relativeSpeed = b.getSpeed().sub(a.getSpeed());
+            double dot = distance.dot(relativeSpeed);
+
+            if (dot > 0) {
+
+                Vector2d n = a.getCurrentPos().sub(b.getCurrentPos());
+                Vector2d un = n.normalize();
+                Vector2d ut = new Vector2d(-un.getY(), un.getX());
+
+                Vector2d v1 = a.getSpeed();
+                Vector2d v2 = b.getSpeed();
+
+                double v1t = ut.dot(v1);
+                double v2t = ut.dot(v2);
+                double v1n = un.dot(v1);
+                double v2n = un.dot(v2);
+
+                double v1n_new = (v1n * (a.getMass() - b.getMass()) + 2 * b.getMass() * v2n) / (a.getMass() + b.getMass());
+                double v2n_new = (v2n * (b.getMass() - a.getMass()) + 2 * a.getMass() * v1n) / (a.getMass() + b.getMass());
+
+                Vector2d v1n_vec = un.scale(v1n_new);
+                Vector2d v2n_vec = un.scale(v2n_new);
+
+                Vector2d v1t_vec = ut.scale(v1t);
+                Vector2d v2t_vec = ut.scale(v2t);
+
+                Vector2d v1_new = v1n_vec.add(v1t_vec);
+                Vector2d v2_new = v2n_vec.add(v2t_vec);
+
+                a.setSpeed(v1_new);
+                b.setSpeed(v2_new);
+            }
+        }
+    }
 }

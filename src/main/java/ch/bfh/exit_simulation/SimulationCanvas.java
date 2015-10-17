@@ -1,14 +1,16 @@
 package ch.bfh.exit_simulation;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
  */
 public class SimulationCanvas extends Canvas {
 
-    public static final int W = 800;
-    public static final int H = 600;
+    public static final int W = 1280;
+    public static final int H = 720;
 
     public SimulationCanvas() {
         this.setBounds(0, 50, W, H);
