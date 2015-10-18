@@ -78,4 +78,35 @@ public class BallController implements Controller {
             }
         }
     }
+
+    public Collision highSpeedCollision(Ball b2) {
+        Collision c = null;
+        if (this.ball != b2) {
+            Ball a = this.ball;
+            Ball b = b2;
+            double maxT = a.getCurrentPos().sub(a.getLastPos()).magnitude() / a.getSpeed().magnitude();
+
+            Vector2d pAB = a.getLastPos().sub(b.getLastPos());
+            Vector2d vAB = a.getSpeed().sub(b.getSpeed());
+            double r = Math.pow(a.getRadius() + b.getRadius(), 2);
+
+            double mfA = vAB.dot(vAB);
+            double mfB = 2 * pAB.dot(vAB);
+            double mfC = pAB.dot(pAB) - r;
+
+            double determinant = Math.pow(mfB, 2) - (4 * mfA * mfC);
+
+            if (determinant > 0) {
+                double t0 = (-mfB - Math.sqrt(determinant)) / (2 * mfA);
+                double t1 = (-mfB + Math.sqrt(determinant)) / (2 * mfA);
+                double t = Math.min(t0, t1);
+
+                if (t >= 0 && t <= maxT) {
+                    c = new Collision(a, b, t, maxT);
+                }
+            }
+        }
+
+        return c;
+    }
 }

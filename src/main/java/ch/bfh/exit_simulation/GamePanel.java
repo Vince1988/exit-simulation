@@ -1,6 +1,8 @@
 package ch.bfh.exit_simulation;
 
 import ch.bfh.exit_simulation.controller.BallController;
+import ch.bfh.exit_simulation.controller.Collision;
+import ch.bfh.exit_simulation.controller.CollisionAnalyzer;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.model.IObstacle;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
@@ -39,10 +41,15 @@ public class GamePanel {
     public void update() {
         this.balls.forEach(ball -> new BallController(ball).update());
         List<Ball> ballsToCheck = new ArrayList<>(this.balls);
-        for (Ball b : this.balls) {
-            ballsToCheck.remove(b);
-            ballsToCheck.forEach(ball -> new BallController(b).elasticCollision(ball));
-        }
+        Set<Collision> collisions = new HashSet<>();
+        this.balls.forEach(ball -> {
+            BallController c = new BallController(ball);
+            ballsToCheck.remove(ball);
+            ballsToCheck.forEach(b -> collisions.add(c.highSpeedCollision(b)));
+//            ballsToCheck.forEach(c::elasticCollision);
+        });
+        collisions.remove(null);
+        CollisionAnalyzer.executeValidCollisions(collisions);
     }
 
     public void render(Graphics2D g, float interpolation) {
