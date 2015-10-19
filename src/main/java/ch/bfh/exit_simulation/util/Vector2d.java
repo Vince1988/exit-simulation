@@ -76,6 +76,20 @@ public class Vector2d {
         return n.scale(2 * dot).sub(this);
     }
 
+    public Vector2d setMagnitude(double length) {
+        Vector2d unit = this.normalize();
+        return unit.scale(length);
+    }
+
+    /**
+     * Euclidean distance between (location) vectors
+     * @param v other vector to calc distance to
+     * @return distance between vectors
+     */
+    public double distance(Vector2d v) {
+        return Math.sqrt(Math.pow(this.getX()-v.getX(),2) + Math.pow(this.getY()-v.getY(),2));
+    }
+
     public Vector2d copy() {
         return new Vector2d(this);
     }
@@ -120,5 +134,9 @@ public class Vector2d {
     @Override
     public int hashCode() {
         return Objects.hash(getX(), getY());
+    }
+
+    public Point getPoint() {
+        return new Point(new Double(this.getX()).intValue(), new Double(this.getY()).intValue());
     }
 }

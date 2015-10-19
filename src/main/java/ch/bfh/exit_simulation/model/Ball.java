@@ -71,6 +71,7 @@ public class Ball {
         balls.add(new Ball(SimulationCanvas.W - r, h, r, -speed, 0, Color.BLACK));
         balls.add(new Ball(w, r, r, 0, speed, Color.BLACK));
         balls.add(new Ball(w, SimulationCanvas.H - r, r, 0, -speed, Color.BLACK));
+        balls.add(new Ball(2*r, 2*r, r, speed, speed, Color.BLACK));
 
         return balls;
     }

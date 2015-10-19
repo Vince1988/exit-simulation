@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
  * Created by Shylux on 13.10.2015.
  */
 public class ObstaclePoly extends Polygon implements IObstacle {
+    private static final double NAV_POINT_DISTANCE_FROM_OBSTACLE = 20;
 
 
     public Point centerPoint() {
@@ -21,15 +22,14 @@ public class ObstaclePoly extends Polygon implements IObstacle {
         int y = IntStream.of(this.ypoints).limit(this.npoints).sum() / this.npoints;
         return new Point(x, y);
     }
-    public List<Point> getNavigationPoints() {
-        ArrayList<Point> lst = new ArrayList<Point>();
+    public List<Vector2d> getNavigationPoints() {
+        ArrayList<Vector2d> lst = new ArrayList<Vector2d>();
         Vector2d center = new Vector2d(this.centerPoint());
         for (int i = 0; i < this.npoints; i++) {
             Vector2d corner = new Vector2d(this.xpoints[i], this.ypoints[i]);
             Vector2d direction = corner.sub(center);
-            Vector2d navVector = direction.scale(1.2);
-            Vector2d navPoint = center.add(navVector);
-            lst.add(new Point(new Double(navPoint.getX()).intValue(), new Double(navPoint.getY()).intValue()));
+            Vector2d navPoint = center.add(direction).add(direction.setMagnitude(NAV_POINT_DISTANCE_FROM_OBSTACLE));
+            lst.add(new Vector2d(navPoint.getX(), navPoint.getY()));
         }
         return lst;
     }

@@ -1,6 +1,7 @@
 package ch.bfh.exit_simulation.view;
 
 import ch.bfh.exit_simulation.model.ObstaclePoly;
+import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -29,7 +30,7 @@ public class ObstaclePolyRenderer implements Renderer {
                 CENTER_POINT_SIZE);
         Point center = model.centerPoint();
 
-        for (Point p: model.getNavigationPoints()) {
+        for (Vector2d p: model.getNavigationPoints()) {
             graphics.draw(new Line2D.Double(center.getX(), center.getY(), p.getX(), p.getY()));
             graphics.setColor(Color.green);
             graphics.fillOval(
