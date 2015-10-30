@@ -16,6 +16,8 @@ public class SimulationCanvas extends Canvas {
         this.setBounds(0, 50, W, H);
         this.setIgnoreRepaint(true);
         this.setBackground(Color.WHITE);
+        this.addMouseListener(GamePanel.getInstance());
+        this.addMouseMotionListener(GamePanel.getInstance());
     }
 
     public void initCanvas() {

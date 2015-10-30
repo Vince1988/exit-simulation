@@ -66,7 +66,7 @@ public class Vector2d {
 
     public Vector2d normalize() {
         double m = this.magnitude();
-        return m > 0 ? this.div(m) : ZERO;
+        return m != 0 ? this.div(m) : ZERO;
     }
 
     public Vector2d reflect(Vector2d v) {
@@ -79,6 +79,10 @@ public class Vector2d {
     public Vector2d setMagnitude(double length) {
         Vector2d unit = this.normalize();
         return unit.scale(length);
+    }
+    public Vector2d setMaxMagnitude(double maxLength) {
+        double length = this.magnitude();
+        return (length < maxLength) ? this.copy() : this.setMagnitude(maxLength);
     }
 
     /**

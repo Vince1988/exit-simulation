@@ -1,5 +1,6 @@
 package ch.bfh.exit_simulation.controller;
 
+import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.util.Vector2d;
@@ -9,17 +10,29 @@ import ch.bfh.exit_simulation.util.Vector2d;
  */
 public class BallController implements Controller {
 
+    private GamePanel panel;
     private final Ball ball;
 
-    public BallController(Ball ball) {
-        this.ball = ball;
+    public BallController(Ball _ball, GamePanel _panel) {
+        this.ball = _ball;
+        this.panel = _panel;
     }
 
     @Override
     public void update() {
+        // apply new position
         ball.setLastPos(ball.getCurrentPos());
+
+        Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
+        Vector2d targetSpeed = direction.scale(ball.getMaxSpeed());
+        Vector2d speedDiff = targetSpeed.sub(ball.getSpeed());
+        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(ball.getMaxAcceleration());
+        Vector2d newSpeed = ball.getSpeed().add(cappedSpeedDiff);
+        ball.setSpeed(newSpeed);
+
         ball.setCurrentPos(ball.getCurrentPos().add(ball.getSpeed()));
 
+        // Bounce at window edges
         if (ball.getCurrentPos().getX() + ball.getRadius() >= SimulationCanvas.W) {
             ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
             ball.setCurrentPos(new Vector2d(SimulationCanvas.W - ball.getRadius(), ball.getCurrentPos().getY()));

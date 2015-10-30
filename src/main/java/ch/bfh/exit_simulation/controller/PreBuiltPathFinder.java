@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by Shylux on 19.10.2015.
  */
-public class PreBuiltPathFinder implements IPathFinder {
+public class PreBuiltPathFinder implements IPathFinder, INavigator {
     GamePanel panel;
 
     // for each node the next node to reach the exit.
@@ -70,18 +70,7 @@ public class PreBuiltPathFinder implements IPathFinder {
 
     @Override
     public List<Vector2d> getPathToExit(Vector2d startNode) {
-        Vector2d bestEntryNode = null;
-
-        // find best entry node
-        double bestPathLength = Double.MAX_VALUE;
-        for (Vector2d entryNode: navTree.keySet()) {
-            if (collides(startNode, entryNode)) continue;
-            double pathDistance = pathLength.get(entryNode) + startNode.distance(entryNode);
-            if (pathDistance < bestPathLength) {
-                bestEntryNode = entryNode;
-                bestPathLength = pathDistance;
-            }
-        }
+        Vector2d bestEntryNode = getBestEntryNode(startNode);
 
         if (bestEntryNode == null)
             // uh oh.. are you inside an obstacle?
@@ -97,5 +86,33 @@ public class PreBuiltPathFinder implements IPathFinder {
             path.add(nextNode);
         }
         return path;
+    }
+
+    /**
+     * If the entity is inside a structure there will be no entry point since its walled off on all sides.
+     * @param startNode
+     * @return
+     */
+    private Vector2d getBestEntryNode(Vector2d startNode) {
+        Vector2d bestEntryNode = null;
+
+        // find best entry node
+        double bestPathLength = Double.MAX_VALUE;
+        for (Vector2d entryNode: navTree.keySet()) {
+            if (collides(startNode, entryNode)) continue;
+            double pathDistance = pathLength.get(entryNode) + startNode.distance(entryNode);
+            if (pathDistance < bestPathLength) {
+                bestEntryNode = entryNode;
+                bestPathLength = pathDistance;
+            }
+        }
+        return bestEntryNode;
+    }
+
+    @Override
+    public Vector2d getDirection(Vector2d startNode) {
+        Vector2d entryNode = getBestEntryNode(startNode);
+        if (entryNode == null) return Vector2d.ZERO;
+        return getPathToExit(startNode).get(1).sub(startNode).normalize();
     }
 }

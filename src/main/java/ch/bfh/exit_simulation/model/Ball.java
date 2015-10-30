@@ -13,6 +13,8 @@ import java.util.List;
 public class Ball {
 
     private final int radius;
+    private final double maxAcceleration;
+    private final double maxSpeed;
     private final Color color;
 
     private Vector2d lastPos;
@@ -22,19 +24,24 @@ public class Ball {
     private final double kg;
 
 
-    public Ball(float x, float y, int radius, float xs, float ys, Color color) {
+    public Ball(float x, float y, int radius, Color color) {
         this.color = color;
         this.radius = radius;
+        this.maxAcceleration = radius/20d;
+        this.maxSpeed = radius;
 
         this.kg = this.radius;
 
-        this.speed = new Vector2d(xs, ys);
+        this.speed = Vector2d.ZERO;
         this.currentPos = new Vector2d(x, y);
         this.lastPos = this.currentPos.copy();
     }
 
     public Ball(float x, float y, int radius, float speed, Color color) {
-        this(x, y, radius, (float) Math.random() * speed * 2 - speed, (float) Math.random() * speed * 2 - speed, color);
+        this(x, y, radius, color);
+    }
+    public Ball(float x, float y, int radius, float xs, float ys, Color color) {
+        this(x, y, radius, color);
     }
 
     public static Ball createRandomBall() {
@@ -63,7 +70,7 @@ public class Ball {
     public static List<Ball> createCardinalBalls() {
         int h = SimulationCanvas.H / 2;
         int w = SimulationCanvas.W / 2;
-        int r = 50;
+        int r = 10;
         float speed = 10;
 
         List<Ball> balls = new ArrayList<>();
@@ -115,5 +122,9 @@ public class Ball {
     public void setSpeed(Vector2d speed) {
         this.speed = speed;
     }
+
+    public double getMaxAcceleration() { return maxAcceleration; };
+
+    public double getMaxSpeed() { return maxSpeed; };
 }
 

@@ -10,7 +10,7 @@ public class SimulationEngine implements Runnable {
     private GamePanel gamePanel;
 
     public SimulationEngine(SimulationCanvas c) {
-        this.gamePanel = new GamePanel();
+        this.gamePanel = GamePanel.getInstance();
         this.canvas = c;
     }
 

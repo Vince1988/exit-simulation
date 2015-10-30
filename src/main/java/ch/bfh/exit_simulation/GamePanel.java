@@ -1,6 +1,8 @@
 package ch.bfh.exit_simulation;
 
+import ch.bfh.exit_simulation.controller.AttractionNavigator;
 import ch.bfh.exit_simulation.controller.BallController;
+import ch.bfh.exit_simulation.controller.INavigator;
 import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.model.Exit;
@@ -13,6 +15,9 @@ import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +27,7 @@ import java.util.Set;
 /**
  * Created by Vincent Genecand on 21.09.2015.
  */
-public class GamePanel {
+public class GamePanel implements MouseListener, MouseMotionListener {
 
     private Set<Ball> balls;
     public Set<ObstaclePoly> obstacles;
@@ -30,8 +35,15 @@ public class GamePanel {
     private List<Line2D> obstacleNavLineCache;
 
     private PreBuiltPathFinder pathfinder;
+    private AttractionNavigator attractionNavigator;
 
-    public GamePanel() {
+    private static GamePanel _instance;
+    public static GamePanel getInstance() {
+        if (_instance == null)
+            _instance = new GamePanel();
+        return _instance;
+    }
+    private GamePanel() {
         this.balls = new HashSet<>();
         this.obstacles = new HashSet<>();
         this.exit = new Exit(SimulationCanvas.W - 10, SimulationCanvas.H / 2, 10, 50);
@@ -43,14 +55,15 @@ public class GamePanel {
         this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
 
         this.pathfinder = new PreBuiltPathFinder(this);
+        this.attractionNavigator = new AttractionNavigator();
     }
 
     public void update() {
-        this.balls.forEach(ball -> new BallController(ball).update());
+        this.balls.forEach(ball -> new BallController(ball, this).update());
         List<Ball> ballsToCheck = new ArrayList<>(this.balls);
         for (Ball b : this.balls) {
             ballsToCheck.remove(b);
-            ballsToCheck.forEach(ball -> new BallController(b).elasticCollision(ball));
+            ballsToCheck.forEach(ball -> new BallController(b, this).elasticCollision(ball));
         }
     }
 
@@ -104,4 +117,32 @@ public class GamePanel {
         obstacleNavLineCache = collFreeList;
         return collFreeList;
     }
+
+    public INavigator getNavigator() {
+        if (attractionEnabled) return attractionNavigator;
+        return this.pathfinder;
+    }
+
+
+    boolean attractionEnabled = false;
+    public void mousePressed(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1)
+            attractionNavigator.setAttract();
+        else if (e.getButton() == MouseEvent.BUTTON3)
+            attractionNavigator.setScatter();
+
+        attractionEnabled = true;
+    }
+    public void mouseReleased(MouseEvent e) {
+        attractionEnabled = false;
+    }
+    public void mouseDragged(MouseEvent e) {
+        attractionNavigator.setAttractionPoint(new Vector2d(e.getX(), e.getY()));
+    }
+
+    // Unused events
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {}
 }
