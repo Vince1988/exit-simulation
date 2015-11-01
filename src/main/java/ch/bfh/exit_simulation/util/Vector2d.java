@@ -1,6 +1,8 @@
 package ch.bfh.exit_simulation.util;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Point2D;
 import java.util.Objects;
 
 /**
@@ -9,6 +11,7 @@ import java.util.Objects;
 public class Vector2d {
 
     public static final Vector2d ZERO = new Vector2d();
+    public static final Vector2d MAX = new Vector2d(Double.MAX_VALUE, Double.MAX_VALUE);
 
     private final double x;
     private final double y;
@@ -26,7 +29,7 @@ public class Vector2d {
         this(v.x, v.y);
     }
 
-    public Vector2d(Point p) {this(p.getX(), p.getY());}
+    public Vector2d(Point2D p) {this(p.getX(), p.getY());}
 
     /**
      * Calculates the magnitude (length) of the vector.

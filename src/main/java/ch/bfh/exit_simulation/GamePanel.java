@@ -76,11 +76,15 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         g.fill(this.exit);
 
         for (Ball b: this.balls) {
+            g.setColor(Color.BLUE);
             List<Vector2d> path = pathfinder.getPathToExit(b.getCurrentPos());
             if (path == null) continue;
             for (int i = 0; i < path.size()-1; i++) {
                 g.draw(new Line2D.Double(path.get(i).getPoint(), path.get(i+1).getPoint()));
             }
+            Vector2d closestPointOnObst = getClosestPoint(b.getCurrentPos());
+            g.setColor(Color.magenta);
+            g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
         }
 //        for (Vector2d key: this.pathfinder.navTree.keySet()) {
 //            Vector2d val = this.pathfinder.navTree.get(key);
@@ -116,6 +120,21 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         }
         obstacleNavLineCache = collFreeList;
         return collFreeList;
+    }
+
+    /**
+     * Get closest point to an obstacle.
+     * @param start Current position to search from.
+     * @return The closest point to the start on an obstacle.
+     */
+    public Vector2d getClosestPoint(Vector2d start) {
+        Vector2d closestPoint = Vector2d.MAX;
+        for (IObstacle obstacle: this.obstacles) {
+            Vector2d pointOnObst = obstacle.getClosestPoint(start);
+            if (start.distance(closestPoint) > start.distance(pointOnObst))
+                closestPoint = pointOnObst;
+        }
+        return closestPoint;
     }
 
     public INavigator getNavigator() {

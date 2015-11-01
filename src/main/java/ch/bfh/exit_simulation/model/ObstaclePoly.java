@@ -4,6 +4,7 @@ import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -44,6 +45,13 @@ public class ObstaclePoly extends Polygon implements IObstacle {
         return lst;
     }
 
+    /**
+     * Tests if a line collides with the obstacle.
+     *
+     * Note that this method doesn't detect lines which are completely inside the obstacle.
+     * @param line Line to check against.
+     * @return True if line collides with obstacle, false if it doesn't.
+     */
     @Override
     public boolean collides(Line2D line) {
         for (Line2D border: this.getBorderLines()) {
@@ -51,6 +59,47 @@ public class ObstaclePoly extends Polygon implements IObstacle {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public double getDistance(Vector2d p) {
+        Vector2d closestPoint = getClosestPoint(p);
+        return p.distance(closestPoint);
+    }
+
+    /**
+     * Get closest point on polygon starting from p.
+     * This point can be on a side of the polygon.
+     * @param p starting point
+     * @return Closest point on polygon.
+     */
+    public Vector2d getClosestPoint(Vector2d p) {
+        Vector2d closestPoint = Vector2d.ZERO;
+
+        for (Line2D line: getBorderLines()) {
+            Vector2d currPoint;
+
+            Vector2d v = new Vector2d(line.getP1());
+            Vector2d w = new Vector2d(line.getP2());
+
+            double l2 = Math.pow(v.sub(w).magnitude(), 2);
+            if (l2 == 0)
+                currPoint = v;
+            else {
+                double t = p.sub(v).dot(w.sub(v)) / l2;
+                if (t < 0)
+                    currPoint = v;
+                else if (t > 1)
+                    currPoint = w;
+                else {
+                    Vector2d projection = v.add(w.sub(v).scale(t));
+                    currPoint = projection;
+                }
+            }
+            if (p.distance(currPoint) < p.distance(closestPoint))
+                closestPoint = currPoint;
+        }
+        return closestPoint;
     }
 
     public static List<ObstaclePoly> createDemoObstacles() {
