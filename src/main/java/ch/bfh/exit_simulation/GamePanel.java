@@ -137,6 +137,10 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return closestPoint;
     }
 
+    public double getDistanceToClosestObject(Vector2d start) {
+        return getClosestPoint(start).distance(start);
+    }
+
     public INavigator getNavigator() {
         if (attractionEnabled) return attractionNavigator;
         return this.pathfinder;

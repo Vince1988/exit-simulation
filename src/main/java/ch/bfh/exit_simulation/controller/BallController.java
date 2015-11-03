@@ -10,6 +10,10 @@ import ch.bfh.exit_simulation.util.Vector2d;
  */
 public class BallController implements Controller {
 
+    // If the ball is closer than the x amount of radiuses then it will slow down to the described speed.
+    public static final double CRAWL_DISTANCE = 2;
+    public static final double CAREFUL_DISTANCE = 6;
+
     private GamePanel panel;
     private final Ball ball;
 
@@ -24,7 +28,7 @@ public class BallController implements Controller {
         ball.setLastPos(ball.getCurrentPos());
 
         Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
-        Vector2d targetSpeed = direction.scale(ball.getMaxSpeed());
+        Vector2d targetSpeed = direction.scale(getMaxSpeed());
         Vector2d speedDiff = targetSpeed.sub(ball.getSpeed());
         Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(ball.getMaxAcceleration());
         Vector2d newSpeed = ball.getSpeed().add(cappedSpeedDiff);
@@ -48,6 +52,21 @@ public class BallController implements Controller {
             ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
             ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), ball.getRadius()));
         }
+    }
+
+    /**
+     * The maximum speed is dependent on the environment. The closer the entity is to another enity
+     * or wall, the slower it gets. You wouldn't want to risk a crash.
+     * @return The max speed depending on the environment.
+     */
+    private double getMaxSpeed() {
+        double speedModifier = 1.0;
+        double closestObject = panel.getDistanceToClosestObject(ball.getCurrentPos());
+        if (closestObject < CRAWL_DISTANCE * ball.getRadius())
+            speedModifier = 0.1;
+        if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
+            speedModifier = 0.3;
+        return ball.getMaxSpeed()*speedModifier;
     }
 
     public void elasticCollision(Ball b) {

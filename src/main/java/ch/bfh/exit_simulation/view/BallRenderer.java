@@ -1,5 +1,6 @@
 package ch.bfh.exit_simulation.view;
 
+import ch.bfh.exit_simulation.controller.BallController;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.util.Vector2d;
 
@@ -27,9 +28,19 @@ public class BallRenderer implements Renderer {
 
         // draw the ball
         graphics.setColor(ball.getColor());
-        int drawX = (int) ((ball.getCurrentPos().getX() - ball.getLastPos().getX()) * interpolation + ball.getLastPos().getX() - ball.getRadius());
-        int drawY = (int) ((ball.getCurrentPos().getY() - ball.getLastPos().getY()) * interpolation + ball.getLastPos().getY() - ball.getRadius());
-        graphics.fillOval(drawX, drawY, ball.getRadius() * 2, ball.getRadius() * 2);
+        int drawX = (int) ((ball.getCurrentPos().getX() - ball.getLastPos().getX()) * interpolation + ball.getLastPos().getX());
+        int drawY = (int) ((ball.getCurrentPos().getY() - ball.getLastPos().getY()) * interpolation + ball.getLastPos().getY());
+
+        // draw the slow down ranges
+        graphics.setColor(new Color(1f, 0f, 0f, 0.5f));
+        int crawl_radius = (int)(ball.getRadius() * (BallController.CRAWL_DISTANCE+1));
+        graphics.fillOval(drawX-crawl_radius, drawY-crawl_radius, 2*crawl_radius, 2*crawl_radius);
+        graphics.setColor(new Color(1f, 0f, 0f, 0.25f));
+        int careful_radius = (int)(ball.getRadius() * (BallController.CAREFUL_DISTANCE+1));
+        graphics.fillOval(drawX-careful_radius, drawY-careful_radius, 2*careful_radius, 2*careful_radius);
+
+        graphics.setColor(defaultColor);
+        graphics.fillOval(drawX-ball.getRadius(), drawY-ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
 
 //        this.renderSpeedVector(drawX, drawY, graphics);
 
