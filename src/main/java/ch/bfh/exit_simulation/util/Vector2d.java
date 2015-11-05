@@ -146,4 +146,31 @@ public class Vector2d {
     public Point getPoint() {
         return new Point(new Double(this.getX()).intValue(), new Double(this.getY()).intValue());
     }
+
+    /**
+     * Calculates closest point p on line defined by v and w.
+     * Projects p on line v and w. If the projection is between v and w this point will be returned.
+     * If the projection is outside of the line boundaries the closest point v or w are returned.
+     * @param p The point to project on the line.
+     * @param v Start of the line.
+     * @param w End of the line.
+     * @return Closest point p on line defined by v and w.
+     */
+    public static Vector2d getClosestPointOnLine(Vector2d p, Vector2d v, Vector2d w) {
+        double l2 = Math.pow(v.sub(w).magnitude(), 2);
+        if (l2 == 0)
+            return v;
+        else {
+            double t = p.sub(v).dot(w.sub(v)) / l2;
+            if (t < 0)
+                return v;
+            else if (t > 1)
+                return w;
+            else {
+                Vector2d projection = v.add(w.sub(v).scale(t));
+                return projection;
+            }
+        }
+
+    }
 }

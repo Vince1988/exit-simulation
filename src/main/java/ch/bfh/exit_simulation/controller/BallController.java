@@ -55,18 +55,26 @@ public class BallController implements Controller {
     }
 
     /**
-     * The maximum speed is dependent on the environment. The closer the entity is to another enity
+     * The maximum speed is dependent on the environment. The closer the entity is to another entity
      * or wall, the slower it gets. You wouldn't want to risk a crash.
      * @return The max speed depending on the environment.
      */
-    private double getMaxSpeed() {
+    public double getMaxSpeed() {
+        Vector2d calcCenter = getMaxSpeedCalcPoint();
+
         double speedModifier = 1.0;
-        double closestObject = panel.getDistanceToClosestObject(ball.getCurrentPos());
+        double closestObject = panel.getClosestEntityDistance(calcCenter, ball.getCurrentPos());
         if (closestObject < CRAWL_DISTANCE * ball.getRadius())
             speedModifier = 0.1;
-        if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
-            speedModifier = 0.3;
+        else if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
+            speedModifier = 0.5;
+        else
+            speedModifier = 1.0;
         return ball.getMaxSpeed()*speedModifier;
+    }
+
+    public Vector2d getMaxSpeedCalcPoint() {
+        return ball.getCurrentPos().add(ball.getSpeed().normalize().scale(ball.getRadius()*BallController.CRAWL_DISTANCE));
     }
 
     public void elasticCollision(Ball b) {
