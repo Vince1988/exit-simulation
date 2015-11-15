@@ -44,13 +44,13 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     private GamePanel() {
         this.balls = new HashSet<>();
         this.obstacles = new ArrayList<>();
-        this.exit = new Exit(SimulationCanvas.W - 10, SimulationCanvas.H / 2, 10, 50);
+        this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
 
 //        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
 //        IntStream.range(0,50).forEach(x -> this.balls.add(Ball.createRandomBall()));
         this.balls.addAll(Ball.createCardinalBalls());
 
-        this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
+        this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
         this.pathfinder = new PreBuiltPathFinder(this);

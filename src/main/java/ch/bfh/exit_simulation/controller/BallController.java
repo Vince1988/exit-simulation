@@ -65,7 +65,7 @@ public class BallController implements Controller {
         double speedModifier = 1.0;
         double closestObject = panel.getClosestEntityDistance(calcCenter, ball.getCurrentPos());
         if (closestObject < CRAWL_DISTANCE * ball.getRadius())
-            speedModifier = 0.1;
+            speedModifier = 0.2;
         else if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
             speedModifier = 0.5;
         else

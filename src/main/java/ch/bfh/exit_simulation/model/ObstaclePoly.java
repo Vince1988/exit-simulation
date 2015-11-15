@@ -113,6 +113,35 @@ public class ObstaclePoly extends Polygon implements IObstacle {
         lst.add(op);
         return lst;
     }
+    public static List<ObstaclePoly> createHallway() {
+        ArrayList<ObstaclePoly> lst = new ArrayList<ObstaclePoly>();
+        ObstaclePoly op = new ObstaclePoly();
+        op.addRelativePoint(.85, 1);
+        op.addRelativePoint(.75, 1);
+        op.addRelativePoint(.75, .3);
+        op.addRelativePoint(.85, .3);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.65, 0);
+        op.addRelativePoint(.55, 0);
+        op.addRelativePoint(.55, .7);
+        op.addRelativePoint(.65, .7);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.45, .4);
+        op.addRelativePoint(.40, .4);
+        op.addRelativePoint(.40, .8);
+        op.addRelativePoint(.45, .8);
+        lst.add(op);
+        op = new ObstaclePoly();
+        op.addRelativePoint(.2, 1);
+        op.addRelativePoint(.3, 1);
+        op.addRelativePoint(.3, .6);
+        op.addRelativePoint(.2, .6);
+        lst.add(op);
+        return lst;
+    }
+
     private void addRelativePoint(double x, double y) {
         this.addPoint(new Double(SimulationCanvas.W * x).intValue(), new Double(SimulationCanvas.H*y).intValue());
     }

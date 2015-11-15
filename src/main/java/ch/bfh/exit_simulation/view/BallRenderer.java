@@ -36,7 +36,7 @@ public class BallRenderer implements Renderer {
         BallController bc = new BallController(ball, GamePanel.getInstance());
         Vector2d sc = bc.getMaxSpeedCalcPoint();
         double closestObject = GamePanel.getInstance().getClosestEntityDistance(sc, ball.getCurrentPos());
-        System.out.println(closestObject);
+        
         if (closestObject < BallController.CRAWL_DISTANCE * ball.getRadius()) {
             graphics.setColor(new Color(1f, 0f, 0f, 0.4f));
             int crawl_radius = (int) (ball.getRadius() * (BallController.CRAWL_DISTANCE + 1));
