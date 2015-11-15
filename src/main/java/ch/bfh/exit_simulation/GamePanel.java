@@ -4,10 +4,7 @@ import ch.bfh.exit_simulation.controller.AttractionNavigator;
 import ch.bfh.exit_simulation.controller.BallController;
 import ch.bfh.exit_simulation.controller.INavigator;
 import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
-import ch.bfh.exit_simulation.model.Ball;
-import ch.bfh.exit_simulation.model.Exit;
-import ch.bfh.exit_simulation.model.IObstacle;
-import ch.bfh.exit_simulation.model.ObstaclePoly;
+import ch.bfh.exit_simulation.model.*;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.BallRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
@@ -19,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +28,7 @@ import java.util.Set;
 public class GamePanel implements MouseListener, MouseMotionListener {
 
     private Set<Ball> balls;
-    public Set<ObstaclePoly> obstacles;
+    public List<IObstacle> obstacles;
     public Exit exit;
     private List<Line2D> obstacleNavLineCache;
 
@@ -45,7 +43,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     }
     private GamePanel() {
         this.balls = new HashSet<>();
-        this.obstacles = new HashSet<>();
+        this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, SimulationCanvas.H / 2, 10, 50);
 
 //        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
@@ -53,6 +51,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.balls.addAll(Ball.createCardinalBalls());
 
         this.obstacles.addAll(ObstaclePoly.createDemoObstacles());
+        this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
         this.pathfinder = new PreBuiltPathFinder(this);
         this.attractionNavigator = new AttractionNavigator();
@@ -69,7 +68,9 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
     public void render(Graphics2D g, float interpolation) {
         this.balls.forEach(ball -> new BallRenderer(ball).render(g, interpolation));
-        this.obstacles.forEach(obstacle -> new ObstaclePolyRenderer(obstacle).render(g, interpolation));
+        for (IObstacle obst: obstacles) {
+            if (obst instanceof ObstaclePoly) new ObstaclePolyRenderer((ObstaclePoly)obst).render(g, interpolation);
+        }
         g.setColor(Color.green);
         getObstacleNavigationLines().forEach(line -> g.draw(line));
         g.setColor(Color.BLUE);
@@ -82,7 +83,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             for (int i = 0; i < path.size()-1; i++) {
                 g.draw(new Line2D.Double(path.get(i).getPoint(), path.get(i+1).getPoint()));
             }
-            Vector2d closestPointOnObst = getClosestPoint(b.getCurrentPos());
+            Vector2d closestPointOnObst =  getClosestEntity(b.getCurrentPos());
             g.setColor(Color.magenta);
             g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
         }
@@ -127,9 +128,10 @@ public class GamePanel implements MouseListener, MouseMotionListener {
      * @param start Current position to search from.
      * @return The closest point to the start on an obstacle.
      */
-    public Vector2d getClosestPoint(Vector2d start) {
+    public Vector2d getClosestObstaclePoint(Vector2d start) {
         Vector2d closestPoint = Vector2d.MAX;
         for (IObstacle obstacle: this.obstacles) {
+
             Vector2d pointOnObst = obstacle.getClosestPoint(start);
             if (start.distance(closestPoint) > start.distance(pointOnObst))
                 closestPoint = pointOnObst;
@@ -137,8 +139,22 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return closestPoint;
     }
 
-    public double getDistanceToClosestObject(Vector2d start) {
-        return getClosestPoint(start).distance(start);
+    public Vector2d getClosestEntity(Vector2d start) {
+        return getClosestEntity(start, null);
+    }
+    public Vector2d getClosestEntity(Vector2d start, Vector2d ignoreSelf) {
+        Vector2d closestPoint = getClosestObstaclePoint(start);
+        for (Ball ball: balls) {
+            if (ball.getCurrentPos().equals(ignoreSelf)) continue;
+            if (ball.getCurrentPos().equals(start)) continue;
+            if (ball.getCurrentPos().distance(start) < closestPoint.distance(start))
+                closestPoint = ball.getCurrentPos();
+        }
+        return closestPoint;
+    }
+
+    public double getClosestEntityDistance(Vector2d start, Vector2d ignoreSelf) {
+        return getClosestEntity(start, ignoreSelf).distance(start);
     }
 
     public INavigator getNavigator() {

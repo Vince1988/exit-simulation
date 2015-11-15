@@ -1,5 +1,6 @@
 package ch.bfh.exit_simulation.view;
 
+import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.controller.BallController;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.util.Vector2d;
@@ -32,12 +33,19 @@ public class BallRenderer implements Renderer {
         int drawY = (int) ((ball.getCurrentPos().getY() - ball.getLastPos().getY()) * interpolation + ball.getLastPos().getY());
 
         // draw the slow down ranges
-        graphics.setColor(new Color(1f, 0f, 0f, 0.5f));
-        int crawl_radius = (int)(ball.getRadius() * (BallController.CRAWL_DISTANCE+1));
-        graphics.fillOval(drawX-crawl_radius, drawY-crawl_radius, 2*crawl_radius, 2*crawl_radius);
-        graphics.setColor(new Color(1f, 0f, 0f, 0.25f));
-        int careful_radius = (int)(ball.getRadius() * (BallController.CAREFUL_DISTANCE+1));
-        graphics.fillOval(drawX-careful_radius, drawY-careful_radius, 2*careful_radius, 2*careful_radius);
+        BallController bc = new BallController(ball, GamePanel.getInstance());
+        Vector2d sc = bc.getMaxSpeedCalcPoint();
+        double closestObject = GamePanel.getInstance().getClosestEntityDistance(sc, ball.getCurrentPos());
+        System.out.println(closestObject);
+        if (closestObject < BallController.CRAWL_DISTANCE * ball.getRadius()) {
+            graphics.setColor(new Color(1f, 0f, 0f, 0.4f));
+            int crawl_radius = (int) (ball.getRadius() * (BallController.CRAWL_DISTANCE + 1));
+            graphics.fillOval((int) sc.getX() - crawl_radius, (int) sc.getY() - crawl_radius, 2 * crawl_radius, 2 * crawl_radius);
+        } else if (closestObject < BallController.CAREFUL_DISTANCE * ball.getRadius()) {
+            graphics.setColor(new Color(1f, 0f, 0f, 0.1f));
+            int careful_radius = (int) (ball.getRadius() * (BallController.CAREFUL_DISTANCE + 1));
+            graphics.fillOval((int) sc.getX() - careful_radius, (int) sc.getY() - careful_radius, 2 * careful_radius, 2 * careful_radius);
+        }
 
         graphics.setColor(defaultColor);
         graphics.fillOval(drawX-ball.getRadius(), drawY-ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
