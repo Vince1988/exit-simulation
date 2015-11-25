@@ -1,6 +1,8 @@
 package ch.bfh.exit_simulation.model;
 
+import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
+import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.Color;
@@ -80,6 +82,20 @@ public class Ball {
         balls.add(new Ball(w, SimulationCanvas.H - r, r, 0, -speed, Color.BLACK));
         balls.add(new Ball(2*r, 2*r, r, speed, speed, Color.BLACK));
 
+        return balls;
+    }
+
+    public static List<Ball> placeRandomBalls(int amount, GamePanel panel, PreBuiltPathFinder pathfinder) {
+        ArrayList<Ball> balls = new ArrayList<>();
+        while (amount > 0) {
+            // pick random spot on the scene
+            Vector2d pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
+            // use the path finder to check if the ball is at an inaccessible place (no path to exit).
+            if (pathfinder.getPathToExit(pos) == null) continue;
+
+            balls.add(new Ball((float)pos.getX(), (float)pos.getY(), 10, Color.BLACK));
+            amount--;
+        }
         return balls;
     }
 

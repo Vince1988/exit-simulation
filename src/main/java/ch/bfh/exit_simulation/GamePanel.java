@@ -48,13 +48,14 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
 //        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
 //        IntStream.range(0,50).forEach(x -> this.balls.add(Ball.createRandomBall()));
-        this.balls.addAll(Ball.createCardinalBalls());
 
         this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
         this.pathfinder = new PreBuiltPathFinder(this);
         this.attractionNavigator = new AttractionNavigator();
+
+        this.balls.addAll(Ball.placeRandomBalls(30, this, this.pathfinder));
     }
 
     public void update() {
