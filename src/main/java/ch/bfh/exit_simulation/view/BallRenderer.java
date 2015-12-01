@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.geom.Line2D;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
@@ -23,6 +24,8 @@ public class BallRenderer implements Renderer {
 
     @Override
     public void render(Graphics2D graphics, float interpolation) {
+        GamePanel panel = GamePanel.getInstance();
+
         // Save currently used stroke and color, to be able to reset them at the end.
         Color defaultColor = graphics.getColor();
         Stroke defaultStroke = graphics.getStroke();
@@ -33,10 +36,10 @@ public class BallRenderer implements Renderer {
         int drawY = (int) ((ball.getCurrentPos().getY() - ball.getLastPos().getY()) * interpolation + ball.getLastPos().getY());
 
         // draw the slow down ranges
-        if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("renderApproachRanges"))) {
-            BallController bc = new BallController(ball, GamePanel.getInstance());
+        if (Boolean.parseBoolean(panel.props.getProperty("renderApproachRanges"))) {
+            BallController bc = new BallController(ball, panel);
             Vector2d sc = bc.getMaxSpeedCalcPoint();
-            double closestObject = GamePanel.getInstance().getClosestEntityDistance(sc, ball.getCurrentPos());
+            double closestObject = panel.getClosestEntityDistance(sc, ball.getCurrentPos());
 
             if (closestObject < BallController.CRAWL_DISTANCE * ball.getRadius()) {
                 graphics.setColor(new Color(1f, 0f, 0f, 0.4f));
@@ -47,6 +50,14 @@ public class BallRenderer implements Renderer {
                 int careful_radius = (int) (ball.getRadius() * (BallController.CAREFUL_DISTANCE + 1));
                 graphics.fillOval((int) sc.getX() - careful_radius, (int) sc.getY() - careful_radius, 2 * careful_radius, 2 * careful_radius);
             }
+        }
+
+        // draw navigation direction
+        if (Boolean.parseBoolean(panel.props.getProperty("renderNavigationDirection"))) {
+            Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
+            Vector2d directionAbs = ball.getCurrentPos().add(direction.scale(ball.getRadius() * 3));
+            graphics.setColor(Renderer.getColorFromName(panel.props.getProperty("navigationDirectionColor")));
+            graphics.draw(new Line2D.Double(ball.getCurrentPos().getPoint(), directionAbs.getPoint()));
         }
 
         graphics.setColor(defaultColor);
