@@ -1,5 +1,6 @@
 package ch.bfh.exit_simulation.view;
 
+import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.util.Vector2d;
 
@@ -21,24 +22,31 @@ public class ObstaclePolyRenderer implements Renderer {
 
     @Override
     public void render(Graphics2D graphics, float interpolation) {
-        graphics.drawPolygon(model);
-        Point centP = model.centerPoint();
-        graphics.drawOval(
-                new Double(centP.getX()).intValue() - CENTER_POINT_SIZE/2,
-                new Double(centP.getY()).intValue() - CENTER_POINT_SIZE/2,
-                CENTER_POINT_SIZE,
-                CENTER_POINT_SIZE);
-        Point center = model.centerPoint();
+        graphics.setColor(Renderer.getColorFromName(GamePanel.getInstance().props.getProperty("obstacleColor")));
+        if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("fillObstacles")))
+            graphics.fill(model);
+        else
+            graphics.drawPolygon(model);
 
-        for (Vector2d p: model.getNavigationPoints()) {
-            graphics.draw(new Line2D.Double(center.getX(), center.getY(), p.getX(), p.getY()));
-            graphics.setColor(Color.green);
-            graphics.fillOval(
-                    new Double(p.getX()).intValue() - NAVIGATION_POINT_SIZE / 2,
-                    new Double(p.getY()).intValue() - NAVIGATION_POINT_SIZE / 2,
-                    NAVIGATION_POINT_SIZE,
-                    NAVIGATION_POINT_SIZE);
-            graphics.setColor(Color.black);
+        if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("renderNavigationLines"))) {
+            graphics.setColor(Renderer.getColorFromName(GamePanel.getInstance().props.getProperty("navigationLineColor")));
+
+            Point centP = model.centerPoint();
+            graphics.drawOval(
+                    new Double(centP.getX()).intValue() - CENTER_POINT_SIZE / 2,
+                    new Double(centP.getY()).intValue() - CENTER_POINT_SIZE / 2,
+                    CENTER_POINT_SIZE,
+                    CENTER_POINT_SIZE);
+            Point center = model.centerPoint();
+
+            for (Vector2d p : model.getNavigationPoints()) {
+                graphics.draw(new Line2D.Double(center.getX(), center.getY(), p.getX(), p.getY()));
+                graphics.fillOval(
+                        new Double(p.getX()).intValue() - NAVIGATION_POINT_SIZE / 2,
+                        new Double(p.getY()).intValue() - NAVIGATION_POINT_SIZE / 2,
+                        NAVIGATION_POINT_SIZE,
+                        NAVIGATION_POINT_SIZE);
+            }
         }
     }
 }

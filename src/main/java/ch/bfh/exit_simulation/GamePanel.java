@@ -8,19 +8,17 @@ import ch.bfh.exit_simulation.model.*;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.BallRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
+import ch.bfh.exit_simulation.view.Renderer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
@@ -35,6 +33,8 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     private PreBuiltPathFinder pathfinder;
     private AttractionNavigator attractionNavigator;
 
+    public Properties props;
+
     private static GamePanel _instance;
     public static GamePanel getInstance() {
         if (_instance == null)
@@ -42,6 +42,13 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return _instance;
     }
     private GamePanel() {
+        // read properties
+        props = new Properties();
+        try {
+            InputStream in = GamePanel.class.getResourceAsStream("exitsim.properties");
+            props.load(in);
+        } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
+
         this.balls = new HashSet<>();
         this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
@@ -55,7 +62,8 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.pathfinder = new PreBuiltPathFinder(this);
         this.attractionNavigator = new AttractionNavigator();
 
-        this.balls.addAll(Ball.placeRandomBalls(30, this, this.pathfinder));
+        int ball_count = Integer.parseInt(props.getProperty("ballCount"));
+        this.balls.addAll(Ball.placeRandomBalls(ball_count, this, this.pathfinder));
     }
 
     public void update() {
@@ -72,21 +80,29 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         for (IObstacle obst: obstacles) {
             if (obst instanceof ObstaclePoly) new ObstaclePolyRenderer((ObstaclePoly)obst).render(g, interpolation);
         }
-        g.setColor(Color.green);
-        getObstacleNavigationLines().forEach(line -> g.draw(line));
+
+        if (Boolean.parseBoolean(props.getProperty("renderNavigationLines"))) {
+            g.setColor(Renderer.getColorFromName(props.getProperty("navigationLineColor")));
+            getObstacleNavigationLines().forEach(line -> g.draw(line));
+        }
+
         g.setColor(Color.BLUE);
         g.fill(this.exit);
 
         for (Ball b: this.balls) {
-            g.setColor(Color.BLUE);
-            List<Vector2d> path = pathfinder.getPathToExit(b.getCurrentPos());
-            if (path == null) continue;
-            for (int i = 0; i < path.size()-1; i++) {
-                g.draw(new Line2D.Double(path.get(i).getPoint(), path.get(i+1).getPoint()));
+            if (Boolean.parseBoolean(props.getProperty("renderPath"))) {
+                g.setColor(Renderer.getColorFromName(props.getProperty("exitPathColor")));
+                List<Vector2d> path = pathfinder.getPathToExit(b.getCurrentPos());
+                if (path == null) continue;
+                for (int i = 0; i < path.size() - 1; i++) {
+                    g.draw(new Line2D.Double(path.get(i).getPoint(), path.get(i + 1).getPoint()));
+                }
             }
-            Vector2d closestPointOnObst =  getClosestEntity(b.getCurrentPos());
-            g.setColor(Color.magenta);
-            g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
+            if (Boolean.parseBoolean(props.getProperty("renderLineToClosestObject"))) {
+                Vector2d closestPointOnObst = getClosestEntity(b.getCurrentPos());
+                g.setColor(Renderer.getColorFromName(props.getProperty("lineToClosestObjectColor")));
+                g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
+            }
         }
 //        for (Vector2d key: this.pathfinder.navTree.keySet()) {
 //            Vector2d val = this.pathfinder.navTree.get(key);

@@ -86,6 +86,8 @@ public class Ball {
     }
 
     public static List<Ball> placeRandomBalls(int amount, GamePanel panel, PreBuiltPathFinder pathfinder) {
+        int radius = Integer.parseInt(panel.props.getProperty("ballRadius"));
+
         ArrayList<Ball> balls = new ArrayList<>();
         while (amount > 0) {
             // pick random spot on the scene
@@ -93,7 +95,7 @@ public class Ball {
             // use the path finder to check if the ball is at an inaccessible place (no path to exit).
             if (pathfinder.getPathToExit(pos) == null) continue;
 
-            balls.add(new Ball((float)pos.getX(), (float)pos.getY(), 10, Color.BLACK));
+            balls.add(new Ball((float)pos.getX(), (float)pos.getY(), radius, Color.BLACK));
             amount--;
         }
         return balls;
