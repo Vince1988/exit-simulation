@@ -104,11 +104,6 @@ public class GamePanel implements MouseListener, MouseMotionListener {
                 g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
             }
         }
-//        for (Vector2d key: this.pathfinder.navTree.keySet()) {
-//            Vector2d val = this.pathfinder.navTree.get(key);
-//            if (val != null)
-//                g.draw(new Line2D.Double(key.getPoint(), val.getPoint()));
-//        }
     }
 
     public List<Line2D> getObstacleNavigationLines() {
