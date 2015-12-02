@@ -60,6 +60,15 @@ public class BallRenderer implements Renderer {
             graphics.draw(new Line2D.Double(ball.getCurrentPos().getPoint(), directionAbs.getPoint()));
         }
 
+        // draw speed vector
+        if (Boolean.parseBoolean(panel.props.getProperty("renderMomentumDirection"))) {
+            Vector2d speed = ball.getSpeed().normalize().scale(ball.getRadius()).scale(ball.getSpeed().magnitude()/ball.getMaxSpeed() + 1);
+            // length is proportional to speed
+            Vector2d speedAbs = ball.getCurrentPos().add(speed);
+            graphics.setColor(Renderer.getColorFromName(panel.props.getProperty("momentumDirectionColor")));
+            graphics.draw(new Line2D.Double(ball.getCurrentPos().getPoint(), speedAbs.getPoint()));
+        }
+
         graphics.setColor(defaultColor);
         graphics.fillOval(drawX-ball.getRadius(), drawY-ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
 
