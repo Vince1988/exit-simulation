@@ -53,8 +53,8 @@ public class BallRenderer implements Renderer {
         }
 
         // draw navigation direction
+        Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
         if (Boolean.parseBoolean(panel.props.getProperty("renderNavigationDirection"))) {
-            Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
             Vector2d directionAbs = ball.getCurrentPos().add(direction.scale(ball.getRadius() * 3));
             graphics.setColor(Renderer.getColorFromName(panel.props.getProperty("navigationDirectionColor")));
             graphics.draw(new Line2D.Double(ball.getCurrentPos().getPoint(), directionAbs.getPoint()));

@@ -1,9 +1,6 @@
 package ch.bfh.exit_simulation;
 
-import ch.bfh.exit_simulation.controller.AttractionNavigator;
-import ch.bfh.exit_simulation.controller.BallController;
-import ch.bfh.exit_simulation.controller.INavigator;
-import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
+import ch.bfh.exit_simulation.controller.*;
 import ch.bfh.exit_simulation.model.*;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.BallRenderer;
@@ -30,7 +27,8 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     public Exit exit;
     private List<Line2D> obstacleNavLineCache;
 
-    private PreBuiltPathFinder pathfinder;
+    private IPathFinder pathfinder;
+    private INavigator navigator;
     private AttractionNavigator attractionNavigator;
 
     public Properties props;
@@ -59,11 +57,13 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
-        this.pathfinder = new PreBuiltPathFinder(this);
+        CrowdAwareNavigator theNavigator = new CrowdAwareNavigator(this);
+        this.pathfinder = theNavigator;
+        this.navigator = theNavigator;
         this.attractionNavigator = new AttractionNavigator();
 
         int ball_count = Integer.parseInt(props.getProperty("ballCount"));
-        this.balls.addAll(Ball.placeRandomBalls(ball_count, this, this.pathfinder));
+        this.balls.addAll(Ball.placeRandomBalls(ball_count, this));
     }
 
     public void update() {
@@ -171,7 +171,11 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
     public INavigator getNavigator() {
         if (attractionEnabled) return attractionNavigator;
-        return this.pathfinder;
+        return this.navigator;
+    }
+
+    public IPathFinder getPathFinder() {
+        return pathfinder;
     }
 
 

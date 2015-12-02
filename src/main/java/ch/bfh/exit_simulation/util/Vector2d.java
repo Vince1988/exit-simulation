@@ -25,6 +25,14 @@ public class Vector2d {
         this.y = y;
     }
 
+    public static Vector2d fromAngleRad(double angleRad, double magnitude) {
+        Vector2d v = new Vector2d(Math.cos(angleRad), Math.sin(angleRad));
+        return v.setMagnitude(magnitude);
+    }
+    public static Vector2d fromAngleDeg(double angleDeg, double magnitude) {
+        return fromAngleRad(Math.toRadians(angleDeg), magnitude);
+    }
+
     public Vector2d(Vector2d v) {
         this(v.x, v.y);
     }
@@ -107,6 +115,13 @@ public class Vector2d {
 
     public double getY() {
         return y;
+    }
+
+    public double getAngleRad() {
+        return Math.atan2(y, x);
+    }
+    public double getAngleDeg() {
+        return Math.toDegrees(getAngleRad());
     }
 
     @Override
