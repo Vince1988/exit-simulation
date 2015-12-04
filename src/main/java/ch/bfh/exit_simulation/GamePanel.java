@@ -34,7 +34,7 @@ import java.util.Set;
  */
 public class GamePanel implements MouseListener, MouseMotionListener {
 
-    private Set<Controller<?>> controllers;
+    private Set<BallController> ballControllers;
     private Set<Ball> balls;
     public List<IObstacle> obstacles;
     public Exit exit;
@@ -63,7 +63,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             throw new Error("exitsim.properties not valid!");
         }
 
-        this.controllers = new HashSet<>();
+        this.ballControllers = new HashSet<>();
         this.balls = new HashSet<>();
         this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
@@ -79,24 +79,18 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
         int ball_count = Integer.parseInt(props.getProperty("ballCount"));
         BallRenderer br = new BallRenderer();
-        Ball.placeRandomBalls(ball_count, this, this.pathfinder).forEach(b -> this.controllers.add(new BallController(b, br)));
+        Ball.placeRandomBalls(ball_count, this, this.pathfinder).forEach(b -> this.ballControllers.add(new BallController(b, br)));
 
 
     }
 
     public void update() {
-        this.controllers.forEach(Controller::updateModel);
-
-
-        List<Ball> ballsToCheck = new ArrayList<>(this.balls);
-//        for (Ball b : this.balls) {
-//            ballsToCheck.remove(b);
-//            ballsToCheck.forEach(ball -> new BallController(b, this).elasticCollision(ball));
-//        }
+        this.ballControllers.forEach(Controller::updateModel);
+        this.ballControllers.forEach(ballController -> this.ballControllers.forEach(bc -> ballController.collision(bc.getModel())));
     }
 
     public void render(Graphics2D g, float interpolation) {
-        this.controllers.forEach(controller -> controller.updateView(g, interpolation));
+        this.ballControllers.forEach(controller -> controller.updateView(g, interpolation));
         for (IObstacle obst : obstacles) {
             if (obst instanceof ObstaclePoly)
                 new ObstaclePolyRenderer((ObstaclePoly) obst).render((ObstaclePoly) obst, g, interpolation);

@@ -22,6 +22,7 @@ public class Ball {
     private Vector2d lastPos;
     private Vector2d currentPos;
     private Vector2d speed;
+    private Vector2d newSpeed;
 
     private final double kg;
 
@@ -34,6 +35,7 @@ public class Ball {
 
         this.kg = this.radius;
 
+        this.newSpeed = null;
         this.speed = Vector2d.ZERO;
         this.currentPos = new Vector2d(x, y);
         this.lastPos = this.currentPos.copy();
@@ -80,7 +82,7 @@ public class Ball {
         balls.add(new Ball(SimulationCanvas.W - r, h, r, -speed, 0, Color.BLACK));
         balls.add(new Ball(w, r, r, 0, speed, Color.BLACK));
         balls.add(new Ball(w, SimulationCanvas.H - r, r, 0, -speed, Color.BLACK));
-        balls.add(new Ball(2*r, 2*r, r, speed, speed, Color.BLACK));
+        balls.add(new Ball(2 * r, 2 * r, r, speed, speed, Color.BLACK));
 
         return balls;
     }
@@ -99,6 +101,10 @@ public class Ball {
             amount--;
         }
         return balls;
+    }
+
+    public boolean hasNewSpeed() {
+        return this.getNewSpeed() != null;
     }
 
     public double getMass() {
@@ -134,6 +140,11 @@ public class Ball {
     }
 
     public Vector2d getSpeed() {
+        if (this.hasNewSpeed()) {
+            this.speed = this.newSpeed;
+            this.newSpeed = null;
+        }
+
         return speed;
     }
 
@@ -141,8 +152,20 @@ public class Ball {
         this.speed = speed;
     }
 
-    public double getMaxAcceleration() { return maxAcceleration; };
+    public Vector2d getNewSpeed() {
+        return newSpeed;
+    }
 
-    public double getMaxSpeed() { return maxSpeed; };
+    public void setNewSpeed(Vector2d newSpeed) {
+        this.newSpeed = newSpeed;
+    }
+
+    public double getMaxAcceleration() {
+        return maxAcceleration;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
 }
 

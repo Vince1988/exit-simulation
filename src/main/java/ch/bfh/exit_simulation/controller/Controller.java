@@ -19,13 +19,15 @@ public abstract class Controller<T> {
 
     public abstract void updateModel();
 
-    public void collisionCorrection(T model) {
-        // Nothing if not needed!
-    }
-
     public final void updateView(Graphics2D g, float interpolation) {
         this.view.render(this.model, g, interpolation);
     }
 
+    public final T getModel() {
+        return model;
+    }
 
+    public final Renderer<T> getView() {
+        return view;
+    }
 }

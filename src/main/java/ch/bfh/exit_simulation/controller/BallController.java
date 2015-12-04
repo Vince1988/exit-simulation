@@ -77,7 +77,7 @@ public class BallController extends Controller<Ball> {
         return this.model.getCurrentPos().add(this.model.getSpeed().normalize().scale(this.model.getRadius() * BallController.CRAWL_DISTANCE));
     }
 
-    public void elasticCollision(Ball b) {
+    public void collision(Ball b) {
         Ball a = this.model;
 
         //TODO: Improve! code duplication...
@@ -113,8 +113,18 @@ public class BallController extends Controller<Ball> {
                 Vector2d v1_new = v1n_vec.add(v1t_vec);
                 Vector2d v2_new = v2n_vec.add(v2t_vec);
 
-                a.setSpeed(v1_new);
-                b.setSpeed(v2_new);
+                if (a.hasNewSpeed()) {
+                    a.setNewSpeed(a.getNewSpeed().add(v1_new));
+                } else {
+                    a.setNewSpeed(v1_new);
+                }
+
+                if (b.hasNewSpeed()) {
+                    b.setNewSpeed(b.getNewSpeed().add(v2_new));
+                } else {
+                    b.setNewSpeed(v2_new);
+                }
+
             }
         }
     }
