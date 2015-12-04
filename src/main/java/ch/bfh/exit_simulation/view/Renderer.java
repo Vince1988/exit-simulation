@@ -1,14 +1,15 @@
 package ch.bfh.exit_simulation.view;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.lang.reflect.Field;
 
 /**
  * Created by Vincent Genecand on 23.09.2015.
  */
-public interface Renderer {
+public interface Renderer<T> {
 
-    void render(Graphics2D graphics, float interpolation);
+    void render(T model, Graphics2D graphics, float interpolation);
 
     static Color getColorFromName(String colorName) {
         try {

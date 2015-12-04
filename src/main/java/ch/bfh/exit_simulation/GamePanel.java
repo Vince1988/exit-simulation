@@ -2,9 +2,14 @@ package ch.bfh.exit_simulation;
 
 import ch.bfh.exit_simulation.controller.AttractionNavigator;
 import ch.bfh.exit_simulation.controller.BallController;
+import ch.bfh.exit_simulation.controller.Controller;
 import ch.bfh.exit_simulation.controller.INavigator;
 import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
-import ch.bfh.exit_simulation.model.*;
+import ch.bfh.exit_simulation.model.Ball;
+import ch.bfh.exit_simulation.model.Exit;
+import ch.bfh.exit_simulation.model.IObstacle;
+import ch.bfh.exit_simulation.model.ObstacleBoundarie;
+import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.BallRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
@@ -18,13 +23,18 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
  */
 public class GamePanel implements MouseListener, MouseMotionListener {
 
+    private Set<Controller<?>> controllers;
     private Set<Ball> balls;
     public List<IObstacle> obstacles;
     public Exit exit;
@@ -36,19 +46,24 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     public Properties props;
 
     private static GamePanel _instance;
+
     public static GamePanel getInstance() {
         if (_instance == null)
             _instance = new GamePanel();
         return _instance;
     }
+
     private GamePanel() {
         // read properties
         props = new Properties();
         try {
             InputStream in = GamePanel.class.getResourceAsStream("exitsim.properties");
             props.load(in);
-        } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
+        } catch (IOException e) {
+            throw new Error("exitsim.properties not valid!");
+        }
 
+        this.controllers = new HashSet<>();
         this.balls = new HashSet<>();
         this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
@@ -63,22 +78,28 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.attractionNavigator = new AttractionNavigator();
 
         int ball_count = Integer.parseInt(props.getProperty("ballCount"));
-        this.balls.addAll(Ball.placeRandomBalls(ball_count, this, this.pathfinder));
+        BallRenderer br = new BallRenderer();
+        Ball.placeRandomBalls(ball_count, this, this.pathfinder).forEach(b -> this.controllers.add(new BallController(b, br)));
+
+
     }
 
     public void update() {
-        this.balls.forEach(ball -> new BallController(ball, this).update());
+        this.controllers.forEach(Controller::updateModel);
+
+
         List<Ball> ballsToCheck = new ArrayList<>(this.balls);
-        for (Ball b : this.balls) {
-            ballsToCheck.remove(b);
-            ballsToCheck.forEach(ball -> new BallController(b, this).elasticCollision(ball));
-        }
+//        for (Ball b : this.balls) {
+//            ballsToCheck.remove(b);
+//            ballsToCheck.forEach(ball -> new BallController(b, this).elasticCollision(ball));
+//        }
     }
 
     public void render(Graphics2D g, float interpolation) {
-        this.balls.forEach(ball -> new BallRenderer(ball).render(g, interpolation));
-        for (IObstacle obst: obstacles) {
-            if (obst instanceof ObstaclePoly) new ObstaclePolyRenderer((ObstaclePoly)obst).render(g, interpolation);
+        this.controllers.forEach(controller -> controller.updateView(g, interpolation));
+        for (IObstacle obst : obstacles) {
+            if (obst instanceof ObstaclePoly)
+                new ObstaclePolyRenderer((ObstaclePoly) obst).render((ObstaclePoly) obst, g, interpolation);
         }
 
         if (Boolean.parseBoolean(props.getProperty("renderNavigationLines"))) {
@@ -89,7 +110,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         g.setColor(Color.BLUE);
         g.fill(this.exit);
 
-        for (Ball b: this.balls) {
+        for (Ball b : this.balls) {
             if (Boolean.parseBoolean(props.getProperty("renderPath"))) {
                 g.setColor(Renderer.getColorFromName(props.getProperty("exitPathColor")));
                 List<Vector2d> path = pathfinder.getPathToExit(b.getCurrentPos());
@@ -137,12 +158,13 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
     /**
      * Get closest point to an obstacle.
+     *
      * @param start Current position to search from.
      * @return The closest point to the start on an obstacle.
      */
     public Vector2d getClosestObstaclePoint(Vector2d start) {
         Vector2d closestPoint = Vector2d.MAX;
-        for (IObstacle obstacle: this.obstacles) {
+        for (IObstacle obstacle : this.obstacles) {
 
             Vector2d pointOnObst = obstacle.getClosestPoint(start);
             if (start.distance(closestPoint) > start.distance(pointOnObst))
@@ -154,9 +176,10 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     public Vector2d getClosestEntity(Vector2d start) {
         return getClosestEntity(start, null);
     }
+
     public Vector2d getClosestEntity(Vector2d start, Vector2d ignoreSelf) {
         Vector2d closestPoint = getClosestObstaclePoint(start);
-        for (Ball ball: balls) {
+        for (Ball ball : balls) {
             if (ball.getCurrentPos().equals(ignoreSelf)) continue;
             if (ball.getCurrentPos().equals(start)) continue;
             if (ball.getCurrentPos().distance(start) < closestPoint.distance(start))
@@ -176,6 +199,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
 
     boolean attractionEnabled = false;
+
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1)
             attractionNavigator.setAttract();
@@ -184,16 +208,20 @@ public class GamePanel implements MouseListener, MouseMotionListener {
 
         attractionEnabled = true;
     }
+
     public void mouseReleased(MouseEvent e) {
         attractionEnabled = false;
     }
+
     public void mouseDragged(MouseEvent e) {
         attractionNavigator.setAttractionPoint(new Vector2d(e.getX(), e.getY()));
     }
 
     // Unused events
+    // @formatter:off
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
     public void mouseClicked(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {}
+    // @formatter:on
 }

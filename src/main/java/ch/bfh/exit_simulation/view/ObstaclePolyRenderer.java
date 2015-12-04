@@ -4,13 +4,14 @@ import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.util.Vector2d;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Line2D;
 
 /**
  * Created by Shylux on 13.10.2015.
  */
-public class ObstaclePolyRenderer implements Renderer {
+public class ObstaclePolyRenderer implements Renderer<ObstaclePoly> {
 
     private static final int CENTER_POINT_SIZE = 10;
     private static final int NAVIGATION_POINT_SIZE = 10;
@@ -21,7 +22,7 @@ public class ObstaclePolyRenderer implements Renderer {
     }
 
     @Override
-    public void render(Graphics2D graphics, float interpolation) {
+    public void render(ObstaclePoly obstaclePoly, Graphics2D graphics, float interpolation) {
         graphics.setColor(Renderer.getColorFromName(GamePanel.getInstance().props.getProperty("obstacleColor")));
         if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("fillObstacles")))
             graphics.fill(model);

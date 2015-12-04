@@ -4,81 +4,81 @@ import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.util.Vector2d;
+import ch.bfh.exit_simulation.view.Renderer;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
  */
-public class BallController implements Controller {
+public class BallController extends Controller<Ball> {
 
     // If the ball is closer than the x amount of radiuses then it will slow down to the described speed.
     public static final double CRAWL_DISTANCE = 2;
     public static final double CAREFUL_DISTANCE = 6;
 
-    private GamePanel panel;
-    private final Ball ball;
+    private static GamePanel panel = GamePanel.getInstance();
 
-    public BallController(Ball _ball, GamePanel _panel) {
-        this.ball = _ball;
-        this.panel = _panel;
+    public BallController(Ball model, Renderer<Ball> view) {
+        super(model, view);
     }
 
     @Override
-    public void update() {
+    public void updateModel() {
         // apply new position
-        ball.setLastPos(ball.getCurrentPos());
+        this.model.setLastPos(this.model.getCurrentPos());
 
-        Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
+        Vector2d direction = panel.getNavigator().getDirection(this.model.getCurrentPos());
         Vector2d targetSpeed = direction.scale(getMaxSpeed());
-        Vector2d speedDiff = targetSpeed.sub(ball.getSpeed());
-        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(ball.getMaxAcceleration());
-        Vector2d newSpeed = ball.getSpeed().add(cappedSpeedDiff);
-        ball.setSpeed(newSpeed);
+        Vector2d speedDiff = targetSpeed.sub(this.model.getSpeed());
+        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(this.model.getMaxAcceleration());
+        Vector2d newSpeed = this.model.getSpeed().add(cappedSpeedDiff);
+        this.model.setSpeed(newSpeed);
 
-        ball.setCurrentPos(ball.getCurrentPos().add(ball.getSpeed()));
+        this.model.setCurrentPos(this.model.getCurrentPos().add(this.model.getSpeed()));
 
         // Bounce at window edges
-        if (ball.getCurrentPos().getX() + ball.getRadius() >= SimulationCanvas.W) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
-            ball.setCurrentPos(new Vector2d(SimulationCanvas.W - ball.getRadius(), ball.getCurrentPos().getY()));
-        } else if (ball.getCurrentPos().getX() - ball.getRadius() <= 0) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
-            ball.setCurrentPos(new Vector2d(ball.getRadius(), ball.getCurrentPos().getY()));
+        if (this.model.getCurrentPos().getX() + this.model.getRadius() >= SimulationCanvas.W) {
+            this.model.setSpeed(this.model.getSpeed().reflect(new Vector2d(0, 1)));
+            this.model.setCurrentPos(new Vector2d(SimulationCanvas.W - this.model.getRadius(), this.model.getCurrentPos().getY()));
+        } else if (this.model.getCurrentPos().getX() - this.model.getRadius() <= 0) {
+            this.model.setSpeed(this.model.getSpeed().reflect(new Vector2d(0, 1)));
+            this.model.setCurrentPos(new Vector2d(this.model.getRadius(), this.model.getCurrentPos().getY()));
         }
 
-        if (ball.getCurrentPos().getY() + ball.getRadius() >= SimulationCanvas.H) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
-            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), SimulationCanvas.H - ball.getRadius()));
-        } else if (ball.getCurrentPos().getY() - ball.getRadius() <= 0) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
-            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), ball.getRadius()));
+        if (this.model.getCurrentPos().getY() + this.model.getRadius() >= SimulationCanvas.H) {
+            this.model.setSpeed(this.model.getSpeed().reflect(new Vector2d(1, 0)));
+            this.model.setCurrentPos(new Vector2d(this.model.getCurrentPos().getX(), SimulationCanvas.H - this.model.getRadius()));
+        } else if (this.model.getCurrentPos().getY() - this.model.getRadius() <= 0) {
+            this.model.setSpeed(this.model.getSpeed().reflect(new Vector2d(1, 0)));
+            this.model.setCurrentPos(new Vector2d(this.model.getCurrentPos().getX(), this.model.getRadius()));
         }
     }
 
     /**
      * The maximum speed is dependent on the environment. The closer the entity is to another entity
      * or wall, the slower it gets. You wouldn't want to risk a crash.
+     *
      * @return The max speed depending on the environment.
      */
     public double getMaxSpeed() {
         Vector2d calcCenter = getMaxSpeedCalcPoint();
 
         double speedModifier = 1.0;
-        double closestObject = panel.getClosestEntityDistance(calcCenter, ball.getCurrentPos());
-        if (closestObject < CRAWL_DISTANCE * ball.getRadius())
+        double closestObject = panel.getClosestEntityDistance(calcCenter, this.model.getCurrentPos());
+        if (closestObject < CRAWL_DISTANCE * this.model.getRadius())
             speedModifier = 0.2;
-        else if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
+        else if (closestObject < CAREFUL_DISTANCE * this.model.getRadius())
             speedModifier = 0.5;
         else
             speedModifier = 1.0;
-        return ball.getMaxSpeed()*speedModifier;
+        return this.model.getMaxSpeed() * speedModifier;
     }
 
     public Vector2d getMaxSpeedCalcPoint() {
-        return ball.getCurrentPos().add(ball.getSpeed().normalize().scale(ball.getRadius()*BallController.CRAWL_DISTANCE));
+        return this.model.getCurrentPos().add(this.model.getSpeed().normalize().scale(this.model.getRadius() * BallController.CRAWL_DISTANCE));
     }
 
     public void elasticCollision(Ball b) {
-        Ball a = this.ball;
+        Ball a = this.model;
 
         //TODO: Improve! code duplication...
         Vector2d distance = a.getCurrentPos().sub(b.getCurrentPos());

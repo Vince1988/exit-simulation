@@ -14,16 +14,10 @@ import java.awt.geom.Line2D;
 /**
  * Created by Vincent Genecand on 05.10.2015.
  */
-public class BallRenderer implements Renderer {
-
-    private final Ball ball;
-
-    public BallRenderer(Ball ball) {
-        this.ball = ball;
-    }
+public class BallRenderer implements Renderer<Ball> {
 
     @Override
-    public void render(Graphics2D graphics, float interpolation) {
+    public void render(Ball ball, Graphics2D graphics, float interpolation) {
         GamePanel panel = GamePanel.getInstance();
 
         // Save currently used stroke and color, to be able to reset them at the end.
@@ -37,7 +31,8 @@ public class BallRenderer implements Renderer {
 
         // draw the slow down ranges
         if (Boolean.parseBoolean(panel.props.getProperty("renderApproachRanges"))) {
-            BallController bc = new BallController(ball, panel);
+            // FIXME: Should not need to create a Controller inside a Renderer.
+            BallController bc = new BallController(ball, this);
             Vector2d sc = bc.getMaxSpeedCalcPoint();
             double closestObject = panel.getClosestEntityDistance(sc, ball.getCurrentPos());
 
@@ -61,16 +56,16 @@ public class BallRenderer implements Renderer {
         }
 
         graphics.setColor(defaultColor);
-        graphics.fillOval(drawX-ball.getRadius(), drawY-ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
+        graphics.fillOval(drawX - ball.getRadius(), drawY - ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
 
-//        this.renderSpeedVector(drawX, drawY, graphics);
+//        this.renderSpeedVector(ball, drawX, drawY, graphics);
 
         // Reset stroke and color to default
         graphics.setStroke(defaultStroke);
         graphics.setColor(defaultColor);
     }
 
-    private void renderSpeedVector(int drawX, int drawY, Graphics2D graphics) {
+    private void renderSpeedVector(Ball ball, int drawX, int drawY, Graphics2D graphics) {
         // Create a line showing the direction and speed (length) of the ball
         int x1 = drawX + ball.getRadius();
         int y1 = drawY + ball.getRadius();
