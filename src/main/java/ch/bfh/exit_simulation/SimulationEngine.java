@@ -1,12 +1,15 @@
 package ch.bfh.exit_simulation;
 
+import ch.bfh.exit_simulation.controller.ZoomController;
+
+import java.awt.*;
+
 /**
  * Created by Vincent Genecand on 23.09.2015.
  */
 public class SimulationEngine implements Runnable {
 
     private SimulationCanvas canvas;
-
     private GamePanel gamePanel;
 
     public SimulationEngine(SimulationCanvas c) {
@@ -20,7 +23,19 @@ public class SimulationEngine implements Runnable {
 
     private void render(float interpolation) {
         this.canvas.clear();
-        gamePanel.render(this.canvas.getGraphics(), interpolation);
+        // Zoomstufe definieren
+        ZoomController zoomController = ZoomController.getInstance();
+        double zoomScale = zoomController.getScale();
+        double zoomTranslateX = zoomController.getTranslateX();
+        double zoomTranslateY = zoomController.getTranslateY();
+
+
+        Graphics2D g2 = this.canvas.getGraphics();
+        g2.scale(zoomScale, zoomScale);
+        g2.translate(zoomTranslateX,zoomTranslateY);
+        gamePanel.render(g2, interpolation);
+
+
         this.canvas.display();
     }
 

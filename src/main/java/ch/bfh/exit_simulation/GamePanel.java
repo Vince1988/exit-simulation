@@ -1,9 +1,6 @@
 package ch.bfh.exit_simulation;
 
-import ch.bfh.exit_simulation.controller.AttractionNavigator;
-import ch.bfh.exit_simulation.controller.BallController;
-import ch.bfh.exit_simulation.controller.INavigator;
-import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
+import ch.bfh.exit_simulation.controller.*;
 import ch.bfh.exit_simulation.model.Ball;
 import ch.bfh.exit_simulation.model.Exit;
 import ch.bfh.exit_simulation.model.IObstacle;
@@ -11,13 +8,12 @@ import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.BallRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
+import javafx.scene.transform.Scale;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +23,7 @@ import java.util.Set;
 /**
  * Created by Vincent Genecand on 21.09.2015.
  */
-public class GamePanel implements MouseListener, MouseMotionListener {
+public class GamePanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private Set<Ball> balls;
     public Set<ObstaclePoly> obstacles;
@@ -46,7 +42,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     private GamePanel() {
         this.balls = new HashSet<>();
         this.obstacles = new HashSet<>();
-        this.exit = new Exit(SimulationCanvas.W - 10, SimulationCanvas.H / 2, 10, 50);
+        this.exit = new Exit(0, 0, 10, 50);
 
 //        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
 //        IntStream.range(0,50).forEach(x -> this.balls.add(Ball.createRandomBall()));
@@ -123,6 +119,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return this.pathfinder;
     }
 
+    ZoomController zoomController = ZoomController.getInstance();
 
     boolean attractionEnabled = false;
     public void mousePressed(MouseEvent e) {
@@ -130,6 +127,9 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             attractionNavigator.setAttract();
         else if (e.getButton() == MouseEvent.BUTTON3)
             attractionNavigator.setScatter();
+        else if (e.getButton() == MouseEvent.BUTTON2)
+            zoomController.setTranslateX(0);
+            zoomController.setTranslateY(0);
 
         attractionEnabled = true;
     }
@@ -145,4 +145,51 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     public void mouseExited(MouseEvent e) {}
     public void mouseClicked(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {}
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        ZoomController zoomController = ZoomController.getInstance();
+        int W = SimulationCanvas.W;
+        int H = SimulationCanvas.H;
+        double transX = zoomController.getTranslateX();
+        double transY = zoomController.getTranslateY();
+        double zoomFactor = 1.1;
+
+        if (e.getWheelRotation()<0) {
+            //Zoom in
+            zoomController.setScale(zoomController.getScale() *zoomFactor);
+            double scale = zoomController.getScale();
+
+            //zoomController.setTranslateX(((-((W* scale)-W)/2)/scale) - (e.getX()-W/2)/scale);
+            //zoomController.setTranslateY(((-((H* scale)-H)/2)/scale) - (e.getY()-H/2)/scale);
+            //zoomController.setTranslateX((e.getX()-(W/2*scale))/scale);
+            //zoomController.setTranslateY((e.getY()-(H/2*scale))/scale);
+
+
+            zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale*zoomFactor)));
+            zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale*zoomFactor)));
+
+
+            System.out.println("X" + zoomController.getTranslateX());
+            System.out.println("Y" + zoomController.getTranslateY());
+            System.out.println("Scale: " + zoomController.getScale());
+            // getx - (CanvasgrösseX / Zoomstufe = pixel der Ansicht / 2) = XKoordinate Fenster links
+            // gety - (CanvasgrösseY / Zoomstufe = pixel der Ansicht / 2) = YKoordinate Fenster oben
+        }else{
+            //Zoom out
+            zoomController.setScale(zoomController.getScale() / zoomFactor);
+            double scale = zoomController.getScale();
+
+            zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale/zoomFactor)));
+            zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale/zoomFactor)));
+
+
+        }
+
+        System.out.println("X" + zoomController.getTranslateX());
+        System.out.println("Y" + zoomController.getTranslateY());
+        System.out.println("mouseX" + e.getX());
+        System.out.println("mouseY" + e.getY());
+        System.out.println("Scale: " + zoomController.getScale());
+    }
 }

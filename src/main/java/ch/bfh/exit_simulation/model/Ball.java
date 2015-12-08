@@ -1,6 +1,8 @@
 package ch.bfh.exit_simulation.model;
 
+import ch.bfh.exit_simulation.ExitSimulation;
 import ch.bfh.exit_simulation.SimulationCanvas;
+import ch.bfh.exit_simulation.util.Converter;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.Color;
@@ -70,8 +72,8 @@ public class Ball {
     public static List<Ball> createCardinalBalls() {
         int h = SimulationCanvas.H / 2;
         int w = SimulationCanvas.W / 2;
-        int r = 10;
-        float speed = 10;
+        int r = Converter.getPixelFromCentimeter(15);
+        float speed = Converter.getPixelFromMeter(1);
 
         List<Ball> balls = new ArrayList<>();
         balls.add(new Ball(r, h, r, speed, 0, Color.BLACK));
