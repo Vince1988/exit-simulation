@@ -18,7 +18,7 @@ public class CrowdAwareNavigator extends PreBuiltPathFinder {
     public Vector2d getDirection(Vector2d startNode) {
         Vector2d pathDirection = super.getDirection(startNode);
 
-        double personRadius = Double.parseDouble(panel.props.getProperty("ballRadius"));
+        double personRadius = Double.parseDouble(panel.props.getProperty("personRadius"));
         double lookAheadDistance = personRadius * 5;
         Vector2d lookAhead = startNode.add(pathDirection.normalize().scale(lookAheadDistance));
 

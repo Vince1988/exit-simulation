@@ -3,7 +3,7 @@ package ch.bfh.exit_simulation;
 import ch.bfh.exit_simulation.controller.*;
 import ch.bfh.exit_simulation.model.*;
 import ch.bfh.exit_simulation.util.Vector2d;
-import ch.bfh.exit_simulation.view.BallRenderer;
+import ch.bfh.exit_simulation.view.PersonRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
 import ch.bfh.exit_simulation.view.Renderer;
 
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class GamePanel implements MouseListener, MouseMotionListener {
 
-    private Set<Ball> balls;
+    private Set<Person> persons;
     public List<IObstacle> obstacles;
     public Exit exit;
     private List<Line2D> obstacleNavLineCache;
@@ -47,12 +47,9 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             props.load(in);
         } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
 
-        this.balls = new HashSet<>();
+        this.persons = new HashSet<>();
         this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
-
-//        IntStream.range(0,10).forEach(x -> this.balls.add(Ball.createGenericBall(this.balls.size())));
-//        IntStream.range(0,50).forEach(x -> this.balls.add(Ball.createRandomBall()));
 
         this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
@@ -61,21 +58,21 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.navigator = loadNavigator();
         this.attractionNavigator = new AttractionNavigator();
 
-        int ball_count = Integer.parseInt(props.getProperty("ballCount"));
-        this.balls.addAll(Ball.placeRandomBalls(ball_count, this));
+        int person_count = Integer.parseInt(props.getProperty("personCount"));
+        this.persons.addAll(Person.placeRandomPersons(person_count, this));
     }
 
     public void update() {
-        this.balls.forEach(ball -> new BallController(ball, this).update());
-        List<Ball> ballsToCheck = new ArrayList<>(this.balls);
-        for (Ball b : this.balls) {
-            ballsToCheck.remove(b);
-            ballsToCheck.forEach(ball -> new BallController(b, this).elasticCollision(ball));
+        this.persons.forEach(person -> new PersonController(person, this).update());
+        List<Person> personsToCheck = new ArrayList<>(this.persons);
+        for (Person p : this.persons) {
+            personsToCheck.remove(p);
+            personsToCheck.forEach(person -> new PersonController(p, this).elasticCollision(person));
         }
     }
 
     public void render(Graphics2D g, float interpolation) {
-        this.balls.forEach(ball -> new BallRenderer(ball).render(g, interpolation));
+        this.persons.forEach(person -> new PersonRenderer(person).render(g, interpolation));
         for (IObstacle obst: obstacles) {
             if (obst instanceof ObstaclePoly) new ObstaclePolyRenderer((ObstaclePoly)obst).render(g, interpolation);
         }
@@ -88,7 +85,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         g.setColor(Color.BLUE);
         g.fill(this.exit);
 
-        for (Ball b: this.balls) {
+        for (Person b: this.persons) {
             if (Boolean.parseBoolean(props.getProperty("renderPath"))) {
                 g.setColor(Renderer.getColorFromName(props.getProperty("exitPathColor")));
                 List<Vector2d> path = pathfinder.getPathToExit(b.getCurrentPos());
@@ -155,11 +152,11 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     }
     public Vector2d getClosestEntity(Vector2d start, Vector2d ignoreSelf) {
         Vector2d closestPoint = getClosestObstaclePoint(start);
-        for (Ball ball: balls) {
-            if (ball.getCurrentPos().equals(ignoreSelf)) continue;
-            if (ball.getCurrentPos().equals(start)) continue;
-            if (ball.getCurrentPos().distance(start) < closestPoint.distance(start))
-                closestPoint = ball.getCurrentPos();
+        for (Person person : persons) {
+            if (person.getCurrentPos().equals(ignoreSelf)) continue;
+            if (person.getCurrentPos().equals(start)) continue;
+            if (person.getCurrentPos().distance(start) < closestPoint.distance(start))
+                closestPoint = person.getCurrentPos();
         }
         return closestPoint;
     }

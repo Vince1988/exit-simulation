@@ -2,8 +2,6 @@ package ch.bfh.exit_simulation.model;
 
 import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
-import ch.bfh.exit_simulation.controller.IPathFinder;
-import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.Color;
@@ -13,7 +11,7 @@ import java.util.List;
 /**
  * Created by Vincent Genecand on 21.09.2015.
  */
-public class Ball {
+public class Person {
 
     private final int radius;
     private final double maxAcceleration;
@@ -27,7 +25,7 @@ public class Ball {
     private final double kg;
 
 
-    public Ball(float x, float y, int radius, Color color) {
+    public Person(float x, float y, int radius, Color color) {
         this.color = color;
         this.radius = radius;
         this.maxAcceleration = radius/20d;
@@ -40,24 +38,24 @@ public class Ball {
         this.lastPos = this.currentPos.copy();
     }
 
-    public Ball(float x, float y, int radius, float speed, Color color) {
+    public Person(float x, float y, int radius, float speed, Color color) {
         this(x, y, radius, color);
     }
-    public Ball(float x, float y, int radius, float xs, float ys, Color color) {
+    public Person(float x, float y, int radius, float xs, float ys, Color color) {
         this(x, y, radius, color);
     }
 
-    public static Ball createRandomBall() {
+    public static Person createRandomPerson() {
         float x = (float) (Math.random() * SimulationCanvas.W);
         float y = (float) (Math.random() * SimulationCanvas.H);
         int radius = (int) (Math.random() * 10) + 5;
         float speed = (float) (Math.random() * 10) + 5;
         Color c = new Color((int) (Math.random()  * 255),(int) (Math.random()  * 255),(int) (Math.random()  * 255));
 
-        return new Ball(x,y,radius,speed,c);
+        return new Person(x,y,radius,speed,c);
     }
 
-    public static Ball createGenericBall(int i) {
+    public static Person createGenericPerson(int i) {
 //        float x = SimulationCanvas.W / 2;
 //        float y = SimulationCanvas.H / 2;
         int radius = 15;
@@ -67,39 +65,39 @@ public class Ball {
         float x = radius + i * radius * 2;
         float y = x;
 
-        return new Ball(x,y,radius,speed,c);
+        return new Person(x,y,radius,speed,c);
     }
 
-    public static List<Ball> createCardinalBalls() {
+    public static List<Person> createCardinalPersons() {
         int h = SimulationCanvas.H / 2;
         int w = SimulationCanvas.W / 2;
         int r = 10;
         float speed = 10;
 
-        List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(r, h, r, speed, 0, Color.BLACK));
-        balls.add(new Ball(SimulationCanvas.W - r, h, r, -speed, 0, Color.BLACK));
-        balls.add(new Ball(w, r, r, 0, speed, Color.BLACK));
-        balls.add(new Ball(w, SimulationCanvas.H - r, r, 0, -speed, Color.BLACK));
-        balls.add(new Ball(2*r, 2*r, r, speed, speed, Color.BLACK));
+        List<Person> persons = new ArrayList<>();
+        persons.add(new Person(r, h, r, speed, 0, Color.BLACK));
+        persons.add(new Person(SimulationCanvas.W - r, h, r, -speed, 0, Color.BLACK));
+        persons.add(new Person(w, r, r, 0, speed, Color.BLACK));
+        persons.add(new Person(w, SimulationCanvas.H - r, r, 0, -speed, Color.BLACK));
+        persons.add(new Person(2*r, 2*r, r, speed, speed, Color.BLACK));
 
-        return balls;
+        return persons;
     }
 
-    public static List<Ball> placeRandomBalls(int amount, GamePanel panel) {
-        int radius = Integer.parseInt(panel.props.getProperty("ballRadius"));
+    public static List<Person> placeRandomPersons(int amount, GamePanel panel) {
+        int radius = Integer.parseInt(panel.props.getProperty("personRadius"));
 
-        ArrayList<Ball> balls = new ArrayList<>();
+        ArrayList<Person> persons = new ArrayList<>();
         while (amount > 0) {
             // pick random spot on the scene
             Vector2d pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
-            // use the path finder to check if the ball is at an inaccessible place (no path to exit).
+            // use the path finder to check if the person is at an inaccessible place (no path to exit).
             if (panel.getPathFinder().getPathToExit(pos) == null) continue;
 
-            balls.add(new Ball((float)pos.getX(), (float)pos.getY(), radius, Color.BLACK));
+            persons.add(new Person((float)pos.getX(), (float)pos.getY(), radius, Color.BLACK));
             amount--;
         }
-        return balls;
+        return persons;
     }
 
     public double getMass() {

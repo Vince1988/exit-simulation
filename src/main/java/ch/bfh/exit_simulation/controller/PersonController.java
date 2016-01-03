@@ -2,55 +2,55 @@ package ch.bfh.exit_simulation.controller;
 
 import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
-import ch.bfh.exit_simulation.model.Ball;
+import ch.bfh.exit_simulation.model.Person;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
  */
-public class BallController implements Controller {
+public class PersonController implements Controller {
 
-    // If the ball is closer than the x amount of radiuses then it will slow down to the described speed.
+    // If the person is closer than the x amount of radiuses then it will slow down to the described speed.
     public static final double CRAWL_DISTANCE = 2;
     public static final double CAREFUL_DISTANCE = 6;
 
     private GamePanel panel;
-    private final Ball ball;
+    private final Person person;
 
-    public BallController(Ball _ball, GamePanel _panel) {
-        this.ball = _ball;
+    public PersonController(Person _person, GamePanel _panel) {
+        this.person = _person;
         this.panel = _panel;
     }
 
     @Override
     public void update() {
         // apply new position
-        ball.setLastPos(ball.getCurrentPos());
+        person.setLastPos(person.getCurrentPos());
 
-        Vector2d direction = panel.getNavigator().getDirection(ball.getCurrentPos());
+        Vector2d direction = panel.getNavigator().getDirection(person.getCurrentPos());
         Vector2d targetSpeed = direction.scale(getMaxSpeed());
-        Vector2d speedDiff = targetSpeed.sub(ball.getSpeed());
-        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(ball.getMaxAcceleration());
-        Vector2d newSpeed = ball.getSpeed().add(cappedSpeedDiff);
-        ball.setSpeed(newSpeed);
+        Vector2d speedDiff = targetSpeed.sub(person.getSpeed());
+        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(person.getMaxAcceleration());
+        Vector2d newSpeed = person.getSpeed().add(cappedSpeedDiff);
+        person.setSpeed(newSpeed);
 
-        ball.setCurrentPos(ball.getCurrentPos().add(ball.getSpeed()));
+        person.setCurrentPos(person.getCurrentPos().add(person.getSpeed()));
 
         // Bounce at window edges
-        if (ball.getCurrentPos().getX() + ball.getRadius() >= SimulationCanvas.W) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
-            ball.setCurrentPos(new Vector2d(SimulationCanvas.W - ball.getRadius(), ball.getCurrentPos().getY()));
-        } else if (ball.getCurrentPos().getX() - ball.getRadius() <= 0) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(0, 1)));
-            ball.setCurrentPos(new Vector2d(ball.getRadius(), ball.getCurrentPos().getY()));
+        if (person.getCurrentPos().getX() + person.getRadius() >= SimulationCanvas.W) {
+            person.setSpeed(person.getSpeed().reflect(new Vector2d(0, 1)));
+            person.setCurrentPos(new Vector2d(SimulationCanvas.W - person.getRadius(), person.getCurrentPos().getY()));
+        } else if (person.getCurrentPos().getX() - person.getRadius() <= 0) {
+            person.setSpeed(person.getSpeed().reflect(new Vector2d(0, 1)));
+            person.setCurrentPos(new Vector2d(person.getRadius(), person.getCurrentPos().getY()));
         }
 
-        if (ball.getCurrentPos().getY() + ball.getRadius() >= SimulationCanvas.H) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
-            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), SimulationCanvas.H - ball.getRadius()));
-        } else if (ball.getCurrentPos().getY() - ball.getRadius() <= 0) {
-            ball.setSpeed(ball.getSpeed().reflect(new Vector2d(1, 0)));
-            ball.setCurrentPos(new Vector2d(ball.getCurrentPos().getX(), ball.getRadius()));
+        if (person.getCurrentPos().getY() + person.getRadius() >= SimulationCanvas.H) {
+            person.setSpeed(person.getSpeed().reflect(new Vector2d(1, 0)));
+            person.setCurrentPos(new Vector2d(person.getCurrentPos().getX(), SimulationCanvas.H - person.getRadius()));
+        } else if (person.getCurrentPos().getY() - person.getRadius() <= 0) {
+            person.setSpeed(person.getSpeed().reflect(new Vector2d(1, 0)));
+            person.setCurrentPos(new Vector2d(person.getCurrentPos().getX(), person.getRadius()));
         }
     }
 
@@ -63,22 +63,22 @@ public class BallController implements Controller {
         Vector2d calcCenter = getMaxSpeedCalcPoint();
 
         double speedModifier = 1.0;
-        double closestObject = panel.getClosestEntityDistance(calcCenter, ball.getCurrentPos());
-        if (closestObject < CRAWL_DISTANCE * ball.getRadius())
+        double closestObject = panel.getClosestEntityDistance(calcCenter, person.getCurrentPos());
+        if (closestObject < CRAWL_DISTANCE * person.getRadius())
             speedModifier = 0.2;
-        else if (closestObject < CAREFUL_DISTANCE * ball.getRadius())
+        else if (closestObject < CAREFUL_DISTANCE * person.getRadius())
             speedModifier = 0.5;
         else
             speedModifier = 1.0;
-        return ball.getMaxSpeed()*speedModifier;
+        return person.getMaxSpeed()*speedModifier;
     }
 
     public Vector2d getMaxSpeedCalcPoint() {
-        return ball.getCurrentPos().add(ball.getSpeed().normalize().scale(ball.getRadius()*BallController.CRAWL_DISTANCE));
+        return person.getCurrentPos().add(person.getSpeed().normalize().scale(person.getRadius()* PersonController.CRAWL_DISTANCE));
     }
 
-    public void elasticCollision(Ball b) {
-        Ball a = this.ball;
+    public void elasticCollision(Person b) {
+        Person a = this.person;
 
         //TODO: Improve! code duplication...
         Vector2d distance = a.getCurrentPos().sub(b.getCurrentPos());
