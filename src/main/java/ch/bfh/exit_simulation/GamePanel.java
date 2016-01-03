@@ -57,9 +57,8 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
-        CrowdAwareNavigator theNavigator = new CrowdAwareNavigator(this);
-        this.pathfinder = theNavigator;
-        this.navigator = theNavigator;
+        this.pathfinder = loadPathFinder();
+        this.navigator = loadNavigator();
         this.attractionNavigator = new AttractionNavigator();
 
         int ball_count = Integer.parseInt(props.getProperty("ballCount"));
@@ -178,6 +177,26 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return pathfinder;
     }
 
+    public IPathFinder loadPathFinder() {
+        switch (props.getProperty("pathFinder")) {
+            case "PreBuiltPathFinder":
+                return new PreBuiltPathFinder(this);
+            case "CrowdAwareNavigator":
+                return new CrowdAwareNavigator(this);
+            default:
+                throw new Error("Invalid pathFinder set in properties!");
+        }
+    }
+    public INavigator loadNavigator() {
+        switch (props.getProperty("navigator")) {
+            case "PreBuiltPathFinder":
+                return new PreBuiltPathFinder(this);
+            case "CrowdAwareNavigator":
+                return new CrowdAwareNavigator(this);
+            default:
+                throw new Error("Invalid navigator set in properties!");
+        }
+    }
 
     boolean attractionEnabled = false;
     public void mousePressed(MouseEvent e) {

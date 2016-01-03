@@ -111,7 +111,9 @@ public class PreBuiltPathFinder implements IPathFinder, INavigator {
 
     @Override
     public Vector2d getDirection(Vector2d startNode) {
-        Vector2d entryNode = getBestEntryNode(startNode);
+        List<Vector2d> path = panel.getPathFinder().getPathToExit(startNode);
+        if (path == null) return Vector2d.ZERO;
+        Vector2d entryNode = path.get(1);
         if (entryNode == null) return Vector2d.ZERO;
         return getPathToExit(startNode).get(1).sub(startNode).normalize();
     }
