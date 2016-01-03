@@ -2,6 +2,7 @@ package ch.bfh.exit_simulation.model;
 
 import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
+import ch.bfh.exit_simulation.controller.IPathFinder;
 import ch.bfh.exit_simulation.controller.PreBuiltPathFinder;
 import ch.bfh.exit_simulation.util.Vector2d;
 
@@ -85,7 +86,7 @@ public class Ball {
         return balls;
     }
 
-    public static List<Ball> placeRandomBalls(int amount, GamePanel panel, PreBuiltPathFinder pathfinder) {
+    public static List<Ball> placeRandomBalls(int amount, GamePanel panel) {
         int radius = Integer.parseInt(panel.props.getProperty("ballRadius"));
 
         ArrayList<Ball> balls = new ArrayList<>();
@@ -93,7 +94,7 @@ public class Ball {
             // pick random spot on the scene
             Vector2d pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
             // use the path finder to check if the ball is at an inaccessible place (no path to exit).
-            if (pathfinder.getPathToExit(pos) == null) continue;
+            if (panel.getPathFinder().getPathToExit(pos) == null) continue;
 
             balls.add(new Ball((float)pos.getX(), (float)pos.getY(), radius, Color.BLACK));
             amount--;
