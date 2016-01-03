@@ -23,7 +23,7 @@ public class SimulationWindow extends JFrame {
 
     private void addSimulationCanvas(SimulationCanvas canvas) {
         JPanel panel = (JPanel) this.getContentPane();
-        panel.setPreferredSize(new Dimension(canvas.getWidth(), canvas.getHeight() + 50));
+        panel.setPreferredSize(new Dimension(canvas.getWidth(), canvas.getHeight()));
         panel.setLayout(null);
         panel.setBackground(Color.RED);
 

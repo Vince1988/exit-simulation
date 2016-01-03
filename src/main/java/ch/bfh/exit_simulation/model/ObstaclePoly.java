@@ -142,7 +142,7 @@ public class ObstaclePoly extends Polygon implements IObstacle {
         return lst;
     }
 
-    private void addRelativePoint(double x, double y) {
+    public void addRelativePoint(double x, double y) {
         this.addPoint(new Double(SimulationCanvas.W * x).intValue(), new Double(SimulationCanvas.H*y).intValue());
     }
 }

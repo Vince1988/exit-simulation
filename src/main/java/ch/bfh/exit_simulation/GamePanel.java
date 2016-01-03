@@ -2,13 +2,13 @@ package ch.bfh.exit_simulation;
 
 import ch.bfh.exit_simulation.controller.*;
 import ch.bfh.exit_simulation.model.*;
+import ch.bfh.exit_simulation.util.SceneLoader;
 import ch.bfh.exit_simulation.util.Vector2d;
-import ch.bfh.exit_simulation.view.PersonRenderer;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
+import ch.bfh.exit_simulation.view.PersonRenderer;
 import ch.bfh.exit_simulation.view.Renderer;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,6 +16,7 @@ import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
@@ -31,8 +32,6 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     private INavigator navigator;
     private AttractionNavigator attractionNavigator;
 
-    public Properties props;
-
     private static GamePanel _instance;
     public static GamePanel getInstance() {
         if (_instance == null)
@@ -40,18 +39,13 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return _instance;
     }
     private GamePanel() {
-        // read properties
-        props = new Properties();
-        try {
-            InputStream in = GamePanel.class.getResourceAsStream("exitsim.properties");
-            props.load(in);
-        } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
-
         this.persons = new HashSet<>();
         this.obstacles = new ArrayList<>();
         this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
 
-        this.obstacles.addAll(ObstaclePoly.createHallway());
+        loadScene();
+
+        //this.obstacles.addAll(ObstaclePoly.createHallway());
         this.obstacles.addAll(ObstacleBoundarie.getGameBoundaries());
 
         this.pathfinder = loadPathFinder();
@@ -174,7 +168,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         return pathfinder;
     }
 
-    public IPathFinder loadPathFinder() {
+    private IPathFinder loadPathFinder() {
         switch (props.getProperty("pathFinder")) {
             case "PreBuiltPathFinder":
                 return new PreBuiltPathFinder(this);
@@ -184,7 +178,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
                 throw new Error("Invalid pathFinder set in properties!");
         }
     }
-    public INavigator loadNavigator() {
+    private INavigator loadNavigator() {
         switch (props.getProperty("navigator")) {
             case "PreBuiltPathFinder":
                 return new PreBuiltPathFinder(this);
@@ -193,6 +187,21 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             default:
                 throw new Error("Invalid navigator set in properties!");
         }
+    }
+
+    private void loadScene() {
+        obstacles.addAll(SceneLoader.getInstance().getObstacles());
+    }
+
+    private static Properties props;
+    public static Properties getProps() {
+        // read properties
+        props = new Properties();
+        try {
+            InputStream in = GamePanel.class.getResourceAsStream("exitsim.properties");
+            props.load(in);
+        } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
+        return props;
     }
 
     boolean attractionEnabled = false;

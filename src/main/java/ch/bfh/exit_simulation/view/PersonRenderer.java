@@ -36,7 +36,7 @@ public class PersonRenderer implements Renderer {
         int drawY = (int) ((person.getCurrentPos().getY() - person.getLastPos().getY()) * interpolation + person.getLastPos().getY());
 
         // draw the slow down ranges
-        if (Boolean.parseBoolean(panel.props.getProperty("renderApproachRanges"))) {
+        if (Boolean.parseBoolean(panel.getProps().getProperty("renderApproachRanges"))) {
             PersonController bc = new PersonController(person, panel);
             Vector2d sc = bc.getMaxSpeedCalcPoint();
             double closestObject = panel.getClosestEntityDistance(sc, person.getCurrentPos());
@@ -54,18 +54,18 @@ public class PersonRenderer implements Renderer {
 
         // draw navigation direction
         Vector2d direction = panel.getNavigator().getDirection(person.getCurrentPos());
-        if (Boolean.parseBoolean(panel.props.getProperty("renderNavigationDirection"))) {
+        if (Boolean.parseBoolean(panel.getProps().getProperty("renderNavigationDirection"))) {
             Vector2d directionAbs = person.getCurrentPos().add(direction.scale(person.getRadius() * 3));
-            graphics.setColor(Renderer.getColorFromName(panel.props.getProperty("navigationDirectionColor")));
+            graphics.setColor(Renderer.getColorFromName(panel.getProps().getProperty("navigationDirectionColor")));
             graphics.draw(new Line2D.Double(person.getCurrentPos().getPoint(), directionAbs.getPoint()));
         }
 
         // draw speed vector
-        if (Boolean.parseBoolean(panel.props.getProperty("renderMomentumDirection"))) {
+        if (Boolean.parseBoolean(panel.getProps().getProperty("renderMomentumDirection"))) {
             Vector2d speed = person.getSpeed().normalize().scale(person.getRadius()).scale(person.getSpeed().magnitude()/ person.getMaxSpeed() + 1);
             // length is proportional to speed
             Vector2d speedAbs = person.getCurrentPos().add(speed);
-            graphics.setColor(Renderer.getColorFromName(panel.props.getProperty("momentumDirectionColor")));
+            graphics.setColor(Renderer.getColorFromName(panel.getProps().getProperty("momentumDirectionColor")));
             graphics.draw(new Line2D.Double(person.getCurrentPos().getPoint(), speedAbs.getPoint()));
         }
 

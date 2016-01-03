@@ -22,14 +22,14 @@ public class ObstaclePolyRenderer implements Renderer {
 
     @Override
     public void render(Graphics2D graphics, float interpolation) {
-        graphics.setColor(Renderer.getColorFromName(GamePanel.getInstance().props.getProperty("obstacleColor")));
-        if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("fillObstacles")))
+        graphics.setColor(Renderer.getColorFromName(GamePanel.getProps().getProperty("obstacleColor")));
+        if (Boolean.parseBoolean(GamePanel.getProps().getProperty("fillObstacles")))
             graphics.fill(model);
         else
             graphics.drawPolygon(model);
 
-        if (Boolean.parseBoolean(GamePanel.getInstance().props.getProperty("renderNavigationLines"))) {
-            graphics.setColor(Renderer.getColorFromName(GamePanel.getInstance().props.getProperty("navigationLineColor")));
+        if (Boolean.parseBoolean(GamePanel.getProps().getProperty("renderNavigationLines"))) {
+            graphics.setColor(Renderer.getColorFromName(GamePanel.getProps().getProperty("navigationLineColor")));
 
             Point centP = model.centerPoint();
             graphics.drawOval(

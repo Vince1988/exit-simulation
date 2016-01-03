@@ -85,7 +85,7 @@ public class Person {
     }
 
     public static List<Person> placeRandomPersons(int amount, GamePanel panel) {
-        int radius = Integer.parseInt(panel.props.getProperty("personRadius"));
+        int radius = Integer.parseInt(panel.getProps().getProperty("personRadius"));
 
         ArrayList<Person> persons = new ArrayList<>();
         while (amount > 0) {
