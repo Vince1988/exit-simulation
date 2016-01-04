@@ -88,16 +88,25 @@ public class Person {
         int radius = Integer.parseInt(panel.getProps().getProperty("personRadius"));
 
         ArrayList<Person> persons = new ArrayList<>();
-        while (amount > 0) {
-            // pick random spot on the scene
-            Vector2d pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
-            // use the path finder to check if the person is at an inaccessible place (no path to exit).
-            if (panel.getPathFinder().getPathToExit(pos) == null) continue;
-
-            persons.add(new Person((float)pos.getX(), (float)pos.getY(), radius, Color.BLACK));
-            amount--;
+        for (int i = 0; i < amount; i++) {
+            Person p = new Person(0, 0, radius, Color.BLACK);
+            p.placeRandomOnScene(panel);
+            persons.add(p);
         }
         return persons;
+    }
+
+    public void placeRandomOnScene(GamePanel panel) {
+        Vector2d pos;
+        do {
+            // pick random spot on the scene
+            pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
+
+            // use the path finder to check if the person is at an inaccessible place (no path to exit).
+        } while (panel.getPathFinder().getPathToExit(pos) == null);
+
+        // set the found position
+        setCurrentPos(pos);
     }
 
     public double getMass() {

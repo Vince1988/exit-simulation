@@ -61,6 +61,11 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         for (Person p : this.persons) {
             personsToCheck.remove(p);
             personsToCheck.forEach(person -> new PersonController(p, this).elasticCollision(person));
+
+            // check for exit collision
+            if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
+                p.placeRandomOnScene(this);
+            }
         }
     }
 
