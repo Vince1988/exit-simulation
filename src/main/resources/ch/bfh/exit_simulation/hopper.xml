@@ -5,14 +5,14 @@
         <relpoint x="1.0" y=".60"></relpoint>
         <relpoint x=".99" y=".60"></relpoint>
     </exit>
-    <polygon>
+    <obstacle>
         <relpoint x="0" y="0"></relpoint>
         <relpoint x=".9" y=".47"></relpoint>
         <relpoint x="1" y=".4"></relpoint>
-    </polygon>
-    <polygon>
+    </obstacle>
+    <obstacle>
         <relpoint x="0" y="1"></relpoint>
         <relpoint x=".9" y=".53"></relpoint>
         <relpoint x="1" y=".6"></relpoint>
-    </polygon>
+    </obstacle>
 </scene>

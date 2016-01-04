@@ -91,14 +91,13 @@ public class SceneLoader {
                 for (int j = 0; j < points.getLength(); j++) {
                     Node point = points.item(j);
                     if (point.getNodeType() != Node.ELEMENT_NODE) continue;
-                    boolean relative = (point.getLocalName() == "relpoint");
                     String x = getNodeAttr("x", point);
                     String y = getNodeAttr("y", point);
-                    if (!relative) {
-                        polyObj.addPoint(Integer.parseInt(x), Integer.parseInt(y));
-                    } else {
+                    if (point.getLocalName() == "relpoint") { // check if the point is relative or absolute
                         polyObj.addPoint(new Double(Double.parseDouble(x)*sceneWidth).intValue(),
-                                         new Double(Double.parseDouble(y)*sceneHeight).intValue());
+                                new Double(Double.parseDouble(y)*sceneHeight).intValue());
+                    } else {
+                        polyObj.addPoint(Integer.parseInt(x), Integer.parseInt(y));
                     }
                 }
 
