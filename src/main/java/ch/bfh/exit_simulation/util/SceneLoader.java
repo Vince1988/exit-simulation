@@ -1,6 +1,7 @@
 package ch.bfh.exit_simulation.util;
 
 import ch.bfh.exit_simulation.GamePanel;
+import ch.bfh.exit_simulation.model.Exit;
 import ch.bfh.exit_simulation.model.IObstacle;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
@@ -32,6 +33,7 @@ public class SceneLoader {
 
     Dimension windowDimension;
     ArrayList<IObstacle> obstacleList = new ArrayList<>();
+    Exit exit = null;
 
     private static SceneLoader _instance;
     public static SceneLoader getInstance() {
@@ -82,6 +84,9 @@ public class SceneLoader {
                 if (polygon.getNodeType() != Node.ELEMENT_NODE) continue;
 
                 ObstaclePoly polyObj = new ObstaclePoly();
+                if (obstacleList.size() == 0 && exit == null) {
+                    polyObj = new Exit();
+                }
                 NodeList points = polygon.getChildNodes();
                 for (int j = 0; j < points.getLength(); j++) {
                     Node point = points.item(j);
@@ -96,7 +101,12 @@ public class SceneLoader {
                                          new Double(Double.parseDouble(y)*sceneHeight).intValue());
                     }
                 }
-                obstacleList.add(polyObj);
+
+                if (obstacleList.size() == 0 && exit == null) { // first element is the exit
+                    exit = (Exit) polyObj;
+                } else {
+                    obstacleList.add(polyObj);
+                }
             }
         } catch (Exception e) {
             throw new Error(e.getMessage());
@@ -141,4 +151,5 @@ public class SceneLoader {
     public ArrayList<IObstacle> getObstacles() {
         return obstacleList;
     }
+    public Exit getExit() { return exit; }
 }

@@ -41,7 +41,6 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     private GamePanel() {
         this.persons = new HashSet<>();
         this.obstacles = new ArrayList<>();
-        this.exit = new Exit(SimulationCanvas.W - 10, (int) (SimulationCanvas.H * 0.75), 10, 50);
 
         loadScene();
 
@@ -190,7 +189,9 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     }
 
     private void loadScene() {
-        obstacles.addAll(SceneLoader.getInstance().getObstacles());
+        SceneLoader sl = SceneLoader.getInstance();
+        obstacles.addAll(sl.getObstacles());
+        exit = sl.getExit();
     }
 
     private static Properties props;

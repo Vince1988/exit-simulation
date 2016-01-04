@@ -1,4 +1,10 @@
 <scene width="1280" height="720">
+    <exit>
+        <relpoint x=".99" y=".45"></relpoint>
+        <relpoint x="1.0" y=".45"></relpoint>
+        <relpoint x="1.0" y=".55"></relpoint>
+        <relpoint x=".99" y=".55"></relpoint>
+    </exit>
     <polygon>
         <point x="448" y="252"></point>
         <point x="576" y="468"></point>
