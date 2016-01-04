@@ -1,20 +1,20 @@
 <scene width="1280" height="400">
     <exit>
-        <relpoint x=".99" y=".40"></relpoint>
-        <relpoint x="1.0" y=".40"></relpoint>
-        <relpoint x="1.0" y=".60"></relpoint>
-        <relpoint x=".99" y=".60"></relpoint>
+        <relpoint x=".99" y=".40" />
+        <relpoint x="1.0" y=".40" />
+        <relpoint x="1.0" y=".60" />
+        <relpoint x=".99" y=".60" />
     </exit>
     <obstacle>
-        <relpoint x="0" y="0"></relpoint>
-        <relpoint x="0" y=".4"></relpoint>
-        <relpoint x="1" y=".4"></relpoint>
-        <relpoint x="1" y="0"></relpoint>
+        <relpoint x="0" y="0" />
+        <relpoint x="0" y=".4" />
+        <relpoint x="1" y=".4" />
+        <relpoint x="1" y="0" />
     </obstacle>
     <obstacle>
-        <relpoint x="0" y="1"></relpoint>
-        <relpoint x="0" y=".6"></relpoint>
-        <relpoint x="1" y=".6"></relpoint>
-        <relpoint x="1" y="1"></relpoint>
+        <relpoint x="0" y="1" />
+        <relpoint x="0" y=".6" />
+        <relpoint x="1" y=".6" />
+        <relpoint x="1" y="1" />
     </obstacle>
 </scene>
