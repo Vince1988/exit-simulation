@@ -160,36 +160,38 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
             zoomController.setScale(zoomController.getScale() *zoomFactor);
             double scale = zoomController.getScale();
 
-            //zoomController.setTranslateX(((-((W* scale)-W)/2)/scale) - (e.getX()-W/2)/scale);
-            //zoomController.setTranslateY(((-((H* scale)-H)/2)/scale) - (e.getY()-H/2)/scale);
-            //zoomController.setTranslateX((e.getX()-(W/2*scale))/scale);
-            //zoomController.setTranslateY((e.getY()-(H/2*scale))/scale);
-
-
             zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale*zoomFactor)));
             zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale*zoomFactor)));
 
+            //Nur innerhalb des Levels verschieben
+            if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);
+            if(zoomController.getTranslateY() < - H + H/scale) zoomController.setTranslateY(- H + H/scale);
+            if(zoomController.getTranslateX() > 0) zoomController.setTranslateX(0);
+            if(zoomController.getTranslateY() > 0) zoomController.setTranslateY(0);
 
-            System.out.println("X" + zoomController.getTranslateX());
-            System.out.println("Y" + zoomController.getTranslateY());
-            System.out.println("Scale: " + zoomController.getScale());
-            // getx - (CanvasgrösseX / Zoomstufe = pixel der Ansicht / 2) = XKoordinate Fenster links
-            // gety - (CanvasgrösseY / Zoomstufe = pixel der Ansicht / 2) = YKoordinate Fenster oben
         }else{
             //Zoom out
             zoomController.setScale(zoomController.getScale() / zoomFactor);
-            double scale = zoomController.getScale();
 
-            zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale/zoomFactor)));
-            zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale/zoomFactor)));
+            //Nicht weiter herauszoomen als Originalgroesse
+            if (zoomController.getScale() < 1)
+            {
+                zoomController.setScale(1);
+                zoomController.setTranslateX(0);
+                zoomController.setTranslateY(0);
+            } else {
+                double scale = zoomController.getScale();
 
+                zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale/zoomFactor)));
+                zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale/zoomFactor)));
+
+                //Nur innerhalb des Levels verschieben
+                if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);
+                if(zoomController.getTranslateY() < - H + H/scale) zoomController.setTranslateY(- H + H/scale);
+                if(zoomController.getTranslateX() > 0) zoomController.setTranslateX(0);
+                if(zoomController.getTranslateY() > 0) zoomController.setTranslateY(0);
+            }
 
         }
-
-        System.out.println("X" + zoomController.getTranslateX());
-        System.out.println("Y" + zoomController.getTranslateY());
-        System.out.println("mouseX" + e.getX());
-        System.out.println("mouseY" + e.getY());
-        System.out.println("Scale: " + zoomController.getScale());
     }
 }
