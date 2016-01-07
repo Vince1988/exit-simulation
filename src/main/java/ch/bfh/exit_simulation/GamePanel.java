@@ -10,15 +10,13 @@ import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
 import ch.bfh.exit_simulation.view.PersonRenderer;
 import ch.bfh.exit_simulation.view.Renderer;
-import javafx.scene.transform.Scale;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
+
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -259,8 +257,8 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
             zoomController.setScale(zoomController.getScale() *zoomFactor);
             double scale = zoomController.getScale();
 
-            zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale*zoomFactor)));
-            zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale*zoomFactor)));
+            zoomController.setTranslateX(transX + e.getX()/scale - e.getX()/scale*zoomFactor);
+            zoomController.setTranslateY(transY + e.getY()/scale - e.getY()/scale*zoomFactor);
 
             //Nur innerhalb des Levels verschieben
             if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);
@@ -281,8 +279,8 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
             } else {
                 double scale = zoomController.getScale();
 
-                zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale/zoomFactor)));
-                zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale/zoomFactor)));
+                zoomController.setTranslateX(transX + e.getX()/scale - e.getX()/scale/zoomFactor);
+                zoomController.setTranslateY(transY + e.getY()/scale - e.getY()/scale/zoomFactor);
 
                 //Nur innerhalb des Levels verschieben
                 if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);

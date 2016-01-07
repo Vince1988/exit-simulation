@@ -1,13 +1,11 @@
 package ch.bfh.exit_simulation;
 
 import ch.bfh.exit_simulation.util.SceneLoader;
-import ch.bfh.exit_simulation.util.Converter;
 
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import java.awt.*;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
