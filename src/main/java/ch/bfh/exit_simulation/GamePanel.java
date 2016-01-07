@@ -3,25 +3,34 @@ package ch.bfh.exit_simulation;
 import ch.bfh.exit_simulation.controller.*;
 import ch.bfh.exit_simulation.model.*;
 import ch.bfh.exit_simulation.util.SceneLoader;
+import ch.bfh.exit_simulation.model.Exit;
+import ch.bfh.exit_simulation.model.IObstacle;
+import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.util.Vector2d;
 import ch.bfh.exit_simulation.view.ObstaclePolyRenderer;
 import ch.bfh.exit_simulation.view.PersonRenderer;
 import ch.bfh.exit_simulation.view.Renderer;
+import javafx.scene.transform.Scale;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
  */
-public class GamePanel implements MouseListener, MouseMotionListener {
+public class GamePanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private Set<Person> persons;
     public List<IObstacle> obstacles;
@@ -209,6 +218,7 @@ public class GamePanel implements MouseListener, MouseMotionListener {
         } catch (IOException e) { throw new Error("exitsim.properties not valid!"); }
         return props;
     }
+    ZoomController zoomController = ZoomController.getInstance();
 
     boolean attractionEnabled = false;
     public void mousePressed(MouseEvent e) {
@@ -216,6 +226,9 @@ public class GamePanel implements MouseListener, MouseMotionListener {
             attractionNavigator.setAttract();
         else if (e.getButton() == MouseEvent.BUTTON3)
             attractionNavigator.setScatter();
+        else if (e.getButton() == MouseEvent.BUTTON2)
+            zoomController.setTranslateX(0);
+            zoomController.setTranslateY(0);
 
         attractionEnabled = true;
     }
@@ -231,4 +244,53 @@ public class GamePanel implements MouseListener, MouseMotionListener {
     public void mouseExited(MouseEvent e) {}
     public void mouseClicked(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {}
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        ZoomController zoomController = ZoomController.getInstance();
+        int W = SimulationCanvas.W;
+        int H = SimulationCanvas.H;
+        double transX = zoomController.getTranslateX();
+        double transY = zoomController.getTranslateY();
+        double zoomFactor = 1.1;
+
+        if (e.getWheelRotation()<0) {
+            //Zoom in
+            zoomController.setScale(zoomController.getScale() *zoomFactor);
+            double scale = zoomController.getScale();
+
+            zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale*zoomFactor)));
+            zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale*zoomFactor)));
+
+            //Nur innerhalb des Levels verschieben
+            if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);
+            if(zoomController.getTranslateY() < - H + H/scale) zoomController.setTranslateY(- H + H/scale);
+            if(zoomController.getTranslateX() > 0) zoomController.setTranslateX(0);
+            if(zoomController.getTranslateY() > 0) zoomController.setTranslateY(0);
+
+        }else{
+            //Zoom out
+            zoomController.setScale(zoomController.getScale() / zoomFactor);
+
+            //Nicht weiter herauszoomen als Originalgroesse
+            if (zoomController.getScale() < 1)
+            {
+                zoomController.setScale(1);
+                zoomController.setTranslateX(0);
+                zoomController.setTranslateY(0);
+            } else {
+                double scale = zoomController.getScale();
+
+                zoomController.setTranslateX(transX + ((W/scale/2) - (e.getX()/scale/zoomFactor)));
+                zoomController.setTranslateY(transY + ((H/scale/2) - (e.getY()/scale/zoomFactor)));
+
+                //Nur innerhalb des Levels verschieben
+                if(zoomController.getTranslateX() < - W + W/scale) zoomController.setTranslateX(- W + W/scale);
+                if(zoomController.getTranslateY() < - H + H/scale) zoomController.setTranslateY(- H + H/scale);
+                if(zoomController.getTranslateX() > 0) zoomController.setTranslateX(0);
+                if(zoomController.getTranslateY() > 0) zoomController.setTranslateY(0);
+            }
+
+        }
+    }
 }

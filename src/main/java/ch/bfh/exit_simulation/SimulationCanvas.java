@@ -1,6 +1,11 @@
 package ch.bfh.exit_simulation;
 
 import ch.bfh.exit_simulation.util.SceneLoader;
+import ch.bfh.exit_simulation.util.Converter;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 import java.awt.*;
 
@@ -18,6 +23,7 @@ public class SimulationCanvas extends Canvas {
         this.setBackground(Color.WHITE);
         this.addMouseListener(GamePanel.getInstance());
         this.addMouseMotionListener(GamePanel.getInstance());
+        this.addMouseWheelListener(GamePanel.getInstance());
     }
 
     public void initCanvas() {
