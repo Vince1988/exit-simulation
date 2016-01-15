@@ -73,8 +73,8 @@ public class Person {
     public static List<Person> createCardinalPersons() {
         int h = SimulationCanvas.H / 2;
         int w = SimulationCanvas.W / 2;
-        int r = Converter.getPixelFromCentimeter(15);
-        float speed = Converter.getPixelFromMeter(1);
+        int r = Converter.getInstance().getPixelFromCentimeter(15);
+        float speed = Converter.getInstance().getPixelFromMeter(1);
 
         List<Person> persons = new ArrayList<>();
         persons.add(new Person(r, h, r, speed, 0, Color.BLACK));

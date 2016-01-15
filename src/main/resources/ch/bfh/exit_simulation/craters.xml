@@ -1,0 +1,44 @@
+<scene width="5" height="10">
+    <exit>
+        <relpoint x="0" y=".9" />
+        <relpoint x=".02" y=".9" />
+        <relpoint x=".02" y="1" />
+        <relpoint x="0" y="1" />
+    </exit>
+    <obstacle>
+        <point x="0" y="150" />
+        <point x="250" y="150" />
+        <point x="350" y="250" />
+        <point x="0" y="250" />
+    </obstacle>
+    <obstacle>
+        <point x="500" y="150" />
+        <point x="450" y="150" />
+        <point x="400" y="250" />
+        <point x="500" y="250" />
+    </obstacle>
+    <obstacle>
+        <point x="0" y="350" />
+        <point x="50" y="350" />
+        <point x="150" y="450" />
+        <point x="0" y="450" />
+    </obstacle>
+    <obstacle>
+        <point x="500" y="350" />
+        <point x="350" y="350" />
+        <point x="200" y="450" />
+        <point x="500" y="450" />
+    </obstacle>
+    <obstacle>
+        <point x="0" y="500" />
+        <point x="50" y="500" />
+        <point x="350" y="900" />
+        <point x="0" y="900" />
+    </obstacle>
+    <obstacle>
+        <point x="500" y="500" />
+        <point x="450" y="500" />
+        <point x="370" y="900" />
+        <point x="500" y="900" />
+    </obstacle>
+</scene>

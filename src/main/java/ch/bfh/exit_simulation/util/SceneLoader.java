@@ -74,8 +74,24 @@ public class SceneLoader {
             Document doc = parser.getDocument();
 
             Node scene = doc.getDocumentElement();
-            int sceneWidth = Integer.parseInt(getNodeAttr("width", scene));
-            int sceneHeight = Integer.parseInt(getNodeAttr("height", scene));
+
+            int windowWidth = Integer.parseInt(GamePanel.getProps().getProperty("windowWidth"));
+            int windowHeight = Integer.parseInt(GamePanel.getProps().getProperty("windowHeight"));
+
+            double sceneWidthInM = Double.parseDouble(getNodeAttr("width", scene));
+            double sceneHeightInM = Double.parseDouble(getNodeAttr("height", scene));
+
+            if (windowWidth/sceneWidthInM < windowHeight/sceneHeightInM) {
+                Converter.getInstance().setScaleFactor((int) (windowWidth / sceneWidthInM));
+            }else{
+                Converter.getInstance().setScaleFactor((int) (windowHeight / sceneHeightInM));
+            }
+
+            double sceneWidthInPx = sceneWidthInM * Converter.getInstance().getScaleFactor();
+            double sceneHeightInPx = sceneHeightInM * Converter.getInstance().getScaleFactor();
+
+            int sceneWidth = (int) sceneWidthInPx;
+            int sceneHeight = (int) sceneHeightInPx;
             windowDimension = new Dimension(sceneWidth, sceneHeight);
 
             NodeList polygons = scene.getChildNodes();
@@ -97,7 +113,9 @@ public class SceneLoader {
                         polyObj.addPoint(new Double(Double.parseDouble(x)*sceneWidth).intValue(),
                                 new Double(Double.parseDouble(y)*sceneHeight).intValue());
                     } else {
-                        polyObj.addPoint(Integer.parseInt(x), Integer.parseInt(y));
+                        int xInPx = Converter.getInstance().getPixelFromCentimeter(Integer.parseInt(x));
+                        int yInPx = Converter.getInstance().getPixelFromCentimeter(Integer.parseInt(y));
+                        polyObj.addPoint(xInPx, yInPx);
                     }
                 }
 

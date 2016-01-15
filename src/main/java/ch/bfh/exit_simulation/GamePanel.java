@@ -225,6 +225,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
         else if (e.getButton() == MouseEvent.BUTTON3)
             attractionNavigator.setScatter();
         else if (e.getButton() == MouseEvent.BUTTON2)
+            zoomController.setScale(1);
             zoomController.setTranslateX(0);
             zoomController.setTranslateY(0);
 

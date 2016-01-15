@@ -4,31 +4,44 @@ package ch.bfh.exit_simulation.util;
  * Created by Dominik on 06.11.2015.
  */
 public class Converter {
-    private static int scaleFactor = 300;       //pixel pro Meter!
+    private static Converter instance = null;
+    private int scaleFactor = 300;
 
-    public static int getScaleFactor(){
+    protected Converter(){
+        //defeat instantiation
+    }
+
+    public static Converter getInstance(){
+        if (instance == null){
+            instance = new Converter();
+        }
+        return instance;
+    }
+
+
+    public int getScaleFactor(){
         return scaleFactor;
     }
-    public static int setScaleFactor(int sFactor){
+    public int setScaleFactor(int sFactor){
         scaleFactor = sFactor;
         return scaleFactor;
     }
-    public static double getMeter(double pixel){
+    public  double getMeter(double pixel){
         return pixel/scaleFactor;
     }
-    public static double getCentimeter(double pixel){
+    public double getCentimeter(double pixel){
         return pixel/scaleFactor;
     }
-    public static double getMillimeter(double pixel){
+    public double getMillimeter(double pixel){
         return pixel/scaleFactor;
     }
-    public static int getPixelFromMeter(int m){
+    public int getPixelFromMeter(int m){
         return m*scaleFactor;
     }
-    public static int getPixelFromCentimeter(int cm){
+    public int getPixelFromCentimeter(int cm){
         return cm*scaleFactor/100;
     }
-    public static int getPixelFromMillimeter(int mm){
+    public int getPixelFromMillimeter(int mm){
         return mm*scaleFactor/1000;                         //Reihenfolge ist wichtig! (Integer!)
     }
 }
