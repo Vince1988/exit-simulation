@@ -24,6 +24,8 @@ public class Person {
     private Vector2d currentPos;
     private Vector2d speed;
 
+    private long lastCollisionTime;
+
     private final double kg;
 
 
@@ -36,8 +38,11 @@ public class Person {
         this.kg = this.radius;
 
         this.speed = Vector2d.ZERO;
+//        this.speed = new Vector2d(2,1);
         this.currentPos = new Vector2d(x, y);
         this.lastPos = this.currentPos.copy();
+
+        this.lastCollisionTime = 0L;
     }
 
     public Person(float x, float y, int radius, float speed, Color color) {
@@ -154,5 +159,14 @@ public class Person {
     public double getMaxAcceleration() { return maxAcceleration; };
 
     public double getMaxSpeed() { return maxSpeed; };
+
+    public void collided() {
+        this.lastCollisionTime = System.nanoTime();
+    }
+
+    public boolean hasRecentllyColided() {
+        return System.nanoTime() - this.lastCollisionTime < 0.1 * 1000000000;
+//        return true;
+    }
 }
 

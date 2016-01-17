@@ -65,15 +65,25 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
     public void update() {
         this.persons.forEach(person -> new PersonController(person, this).update());
         List<Person> personsToCheck = new ArrayList<>(this.persons);
+
         for (Person p : this.persons) {
             personsToCheck.remove(p);
-            personsToCheck.forEach(person -> new PersonController(p, this).elasticCollision(person));
+            PersonController pc = new PersonController(p, this);
+            personsToCheck.forEach(pc::elasticCollision);
+            for (IObstacle obst: obstacles) {
+                if (obst instanceof ObstaclePoly) {
+                    pc.collision((ObstaclePoly) obst);
+                }
+            }
 
             // check for exit collision
             if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
                 p.placeRandomOnScene(this);
+
             }
         }
+
+
     }
 
     public void render(Graphics2D g, float interpolation) {

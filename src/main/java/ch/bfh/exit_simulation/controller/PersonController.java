@@ -2,8 +2,14 @@ package ch.bfh.exit_simulation.controller;
 
 import ch.bfh.exit_simulation.GamePanel;
 import ch.bfh.exit_simulation.SimulationCanvas;
+import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.model.Person;
 import ch.bfh.exit_simulation.util.Vector2d;
+
+import javax.sound.sampled.Line;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.List;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
@@ -27,12 +33,14 @@ public class PersonController implements Controller {
         // apply new position
         person.setLastPos(person.getCurrentPos());
 
-        Vector2d direction = panel.getNavigator().getDirection(person.getCurrentPos());
-        Vector2d targetSpeed = direction.scale(getMaxSpeed());
-        Vector2d speedDiff = targetSpeed.sub(person.getSpeed());
-        Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(person.getMaxAcceleration());
-        Vector2d newSpeed = person.getSpeed().add(cappedSpeedDiff);
-        person.setSpeed(newSpeed);
+        if (!this.person.hasRecentllyColided()) {
+            Vector2d direction = panel.getNavigator().getDirection(person.getCurrentPos());
+            Vector2d targetSpeed = direction.scale(getMaxSpeed());
+            Vector2d speedDiff = targetSpeed.sub(person.getSpeed());
+            Vector2d cappedSpeedDiff = speedDiff.setMaxMagnitude(person.getMaxAcceleration());
+            Vector2d newSpeed = person.getSpeed().add(cappedSpeedDiff);
+            person.setSpeed(newSpeed);
+        }
 
         person.setCurrentPos(person.getCurrentPos().add(person.getSpeed()));
 
@@ -57,6 +65,7 @@ public class PersonController implements Controller {
     /**
      * The maximum speed is dependent on the environment. The closer the entity is to another entity
      * or wall, the slower it gets. You wouldn't want to risk a crash.
+     *
      * @return The max speed depending on the environment.
      */
     public double getMaxSpeed() {
@@ -70,11 +79,11 @@ public class PersonController implements Controller {
             speedModifier = 0.5;
         else
             speedModifier = 1.0;
-        return person.getMaxSpeed()*speedModifier;
+        return person.getMaxSpeed() * speedModifier;
     }
 
     public Vector2d getMaxSpeedCalcPoint() {
-        return person.getCurrentPos().add(person.getSpeed().normalize().scale(person.getRadius()* PersonController.CRAWL_DISTANCE));
+        return person.getCurrentPos().add(person.getSpeed().normalize().scale(person.getRadius() * PersonController.CRAWL_DISTANCE));
     }
 
     public void elasticCollision(Person b) {
@@ -115,7 +124,64 @@ public class PersonController implements Controller {
 
                 a.setSpeed(v1_new);
                 b.setSpeed(v2_new);
+
+                a.collided();
+                b.collided();
             }
         }
+    }
+
+    public void collision(ObstaclePoly obstacle) {
+        List<Line2D> segments = obstacle.getBorderLines();
+        Point2D.Double collisionPoint;
+
+        for (Line2D segment : segments) {
+            if (this.collision(segment)) {
+                this.person.collided();
+
+            }
+
+        }
+
+//        Vector2d closestPoint = obstacle.getClosestPoint(this.person.getCurrentPos());
+//        double distance = closestPoint.distance(this.person.getCurrentPos());
+//        if (this.person.getRadius() >= distance) {
+//            double diff = this.person.getRadius() - distance;
+//            double length = this.person.getSpeed().magnitude();
+//            double d = diff / length;
+//
+//            this.person.setCurrentPos(this.person.getCurrentPos().sub(this.person.getSpeed().normalize().scale(d).negate()));
+//        }
+
+
+    }
+
+    private boolean collision(Line2D line) {
+        Vector2d c = Vector2d.getClosestPointOnLine(this.person.getCurrentPos(), new Vector2d(line.getP1()), new Vector2d(line.getP2()));
+        double distance = this.person.getCurrentPos().distance(c);
+
+        if (distance <= this.person.getRadius()) {
+            System.out.println("Collision with Wall");
+            Vector2d newSpeed = this.person.getSpeed().reflect(new Vector2d(line.getP2()).sub(new Vector2d(line.getP1())));
+            double diff = this.person.getRadius() - distance;
+
+            Vector2d distVect = this.person.getCurrentPos().sub(c);
+            double length = distVect.magnitude();
+            double d = diff / length;
+
+            this.person.setCurrentPos(this.person.getCurrentPos().add(distVect.normalize().scale(d)));
+
+            System.out.println(this.person.getSpeed());
+            System.out.println(newSpeed);
+
+            this.person.setSpeed(newSpeed);
+
+
+
+            return true;
+        }
+
+        return false;
+
     }
 }
