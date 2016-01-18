@@ -219,6 +219,8 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
     private static Properties props;
     public static Properties getProps() {
         // read properties
+        if (props != null) return props;
+
         props = new Properties();
         try {
             InputStream in = GamePanel.class.getResourceAsStream("exitsim.properties");
