@@ -103,7 +103,7 @@ public class Person {
         return persons;
     }
 
-    public void placeRandomOnScene(GamePanel panel) {
+    public Vector2d placeRandomOnScene(GamePanel panel) {
         Vector2d pos;
         do {
             // pick random spot on the scene
@@ -114,6 +114,7 @@ public class Person {
 
         // set the found position
         setCurrentPos(pos);
+        return pos;
     }
 
     public double getMass() {
@@ -158,7 +159,7 @@ public class Person {
 
     public double getMaxAcceleration() { return maxAcceleration; };
 
-    public double getMaxSpeed() { return maxSpeed; };
+    public double getMaxSpeed() { return maxSpeed; }
 
     public void collided() {
         this.lastCollisionTime = System.nanoTime();

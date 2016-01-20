@@ -31,6 +31,7 @@ import java.util.Set;
 public class GamePanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private Set<Person> persons;
+    private final List<Vector2d> rndPlacements = new ArrayList<>();
     public List<IObstacle> obstacles;
     public Exit exit;
     private List<Line2D> obstacleNavLineCache;
@@ -68,6 +69,13 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
 
         for (Person p : this.persons) {
             personsToCheck.remove(p);
+
+            // check for exit collision
+            if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
+                rndPlacements.add(p.placeRandomOnScene(this));
+
+            }
+
             PersonController pc = new PersonController(p, this);
             personsToCheck.forEach(pc::elasticCollision);
             for (IObstacle obst: obstacles) {
@@ -76,11 +84,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
                 }
             }
 
-            // check for exit collision
-            if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
-                p.placeRandomOnScene(this);
 
-            }
         }
 
 
@@ -114,6 +118,10 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
                 g.setColor(Renderer.getColorFromName(props.getProperty("lineToClosestObjectColor")));
                 g.draw(new Line2D.Double(b.getCurrentPos().getPoint(), closestPointOnObst.getPoint()));
             }
+        }
+
+        for (Vector2d placement : rndPlacements) {
+            g.drawRect((int) placement.getX(), (int) placement.getY(), 1, 1);
         }
     }
 
