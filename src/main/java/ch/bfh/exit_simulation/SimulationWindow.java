@@ -11,7 +11,7 @@ public class SimulationWindow extends JFrame {
     private final SimulationCanvas canvas;
 
     public SimulationWindow(SimulationCanvas canvas) throws HeadlessException {
-        this.setTitle("Title");
+        this.setTitle("Fussgänger-Simulation");
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
