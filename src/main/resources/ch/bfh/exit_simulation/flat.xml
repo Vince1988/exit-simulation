@@ -8,10 +8,14 @@
     <obstacle>
         <point x="0" y="800" />
         <point x="0" y="850" />
-        <point x="950" y="850" />
+        <point x="1000" y="850" />
+        <point x="1000" y="800" />
+    </obstacle>
+    <obstacle>
+        <point x="1000" y="800" />
+        <point x="950" y="800" />
         <point x="950" y="1700" />
         <point x="1000" y="1700" />
-        <point x="1000" y="800" />
     </obstacle>
     <obstacle>
         <point x="950" y="2000" />
@@ -21,19 +25,19 @@
     </obstacle>
 
     <obstacle>
-        <point x="1200" y="800" />
-        <point x="1200" y="850" />
-        <point x="1350" y="850" />
+        <!--<point x="1200" y="800" />-->
+        <!--<point x="1200" y="850" />-->
+        <point x="1350" y="1500" />
         <point x="1350" y="0" />
         <point x="1300" y="0" />
-        <point x="1300" y="800" />
+        <point x="1300" y="1500" />
     </obstacle>
 
     <obstacle>
         <point x="1300" y="800" />
-        <point x="1300" y="1500" />
-        <point x="1350" y="1500" />
-        <point x="1350" y="850" />
+        <!--<point x="1300" y="1500" />-->
+        <!--<point x="1350" y="1500" />-->
+        <point x="1300" y="850" />
         <point x="2000" y="850" />
         <point x="2000" y="800" />
     </obstacle>
