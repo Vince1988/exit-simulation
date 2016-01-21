@@ -110,7 +110,8 @@ public class Person {
             pos = new Vector2d(Math.random() * SimulationCanvas.W, Math.random() * SimulationCanvas.H);
 
             // use the path finder to check if the person is at an inaccessible place (no path to exit).
-        } while (panel.getPathFinder().getPathToExit(pos) == null);
+        } while (panel.getPathFinder().getPathToExit(pos) == null ||
+                    panel.getClosestObstaclePoint(pos).distance(pos) < this.radius);
 
         // set the found position
         setCurrentPos(pos);

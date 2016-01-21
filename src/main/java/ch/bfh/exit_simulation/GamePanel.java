@@ -73,7 +73,6 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
             // check for exit collision
             if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
                 rndPlacements.add(p.placeRandomOnScene(this));
-
             }
 
             PersonController pc = new PersonController(p, this);
