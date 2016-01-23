@@ -113,8 +113,8 @@ public class SceneLoader {
                         polyObj.addPoint(new Double(Double.parseDouble(x)*sceneWidth).intValue(),
                                 new Double(Double.parseDouble(y)*sceneHeight).intValue());
                     } else {
-                        int xInPx = Converter.getInstance().getPixelFromCentimeter(Integer.parseInt(x));
-                        int yInPx = Converter.getInstance().getPixelFromCentimeter(Integer.parseInt(y));
+                        int xInPx = Converter.getInstance().getPixelFromMeter(Double.parseDouble(x));
+                        int yInPx = Converter.getInstance().getPixelFromMeter(Double.parseDouble(y));
                         polyObj.addPoint(xInPx, yInPx);
                     }
                 }

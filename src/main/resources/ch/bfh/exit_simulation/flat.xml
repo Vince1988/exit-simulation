@@ -6,60 +6,60 @@
         <relpoint x=".99" y=".1" />
     </exit>
     <obstacle>
-        <point x="0" y="800" />
-        <point x="0" y="850" />
-        <point x="1000" y="850" />
-        <point x="1000" y="800" />
+        <point x="0" y="8" />
+        <point x="0" y="8.5" />
+        <point x="10.00" y="8.5" />
+        <point x="10.00" y="8.00" />
     </obstacle>
     <obstacle>
-        <point x="1000" y="800" />
-        <point x="950" y="800" />
-        <point x="950" y="1700" />
-        <point x="1000" y="1700" />
+        <point x="10.00" y="8.00" />
+        <point x="9.50" y="8.00" />
+        <point x="9.50" y="17.00" />
+        <point x="10.00" y="17.00" />
     </obstacle>
     <obstacle>
-        <point x="950" y="2000" />
-        <point x="1000" y="2000" />
-        <point x="1000" y="1900" />
-        <point x="950" y="1900" />
+        <point x="9.50" y="20.00" />
+        <point x="10.00" y="20.00" />
+        <point x="10.00" y="19.00" />
+        <point x="9.50" y="19.00" />
     </obstacle>
 
     <obstacle>
         <!--<point x="1200" y="800" />-->
         <!--<point x="1200" y="850" />-->
-        <point x="1350" y="1500" />
-        <point x="1350" y="0" />
-        <point x="1300" y="0" />
-        <point x="1300" y="1500" />
+        <point x="13.50" y="15.00" />
+        <point x="13.50" y="0" />
+        <point x="13.00" y="0" />
+        <point x="13.00" y="15.00" />
     </obstacle>
 
     <obstacle>
-        <point x="1300" y="800" />
+        <point x="13.00" y="8.00" />
         <!--<point x="1300" y="1500" />-->
         <!--<point x="1350" y="1500" />-->
-        <point x="1300" y="850" />
-        <point x="2000" y="850" />
-        <point x="2000" y="800" />
+        <point x="13.00" y="8.50" />
+        <point x="20.00" y="8.50" />
+        <point x="20.00" y="8.00" />
     </obstacle>
 
     <obstacle>
-        <point x="1300" y="1700" />
-        <point x="1300" y="2000" />
-        <point x="1350" y="2000" />
-        <point x="1350" y="1700" />
+        <point x="13.00" y="17.00" />
+        <point x="13.00" y="20.00" />
+        <point x="13.50" y="20.00" />
+        <point x="13.50" y="17.00" />
     </obstacle>
     <obstacle>
-        <point x="2200" y="800" />
-        <point x="2500" y="800" />
-        <point x="2500" y="850" />
-        <point x="2200" y="850" />
+        <point x="22.00" y="8.00" />
+        <point x="25.00" y="8.00" />
+        <point x="25.00" y="8.50" />
+        <point x="22.00" y="8.50" />
     </obstacle>
 
     <obstacle>
-        <point x="1600" y="1200" />
-        <point x="2300" y="1200" />
-        <point x="2300" y="1500" />
-        <point x="1600" y="1500" />
+        <point x="16.00" y="12.00" />
+        <point x="23.00" y="12.00" />
+        <point x="23.00" y="15.00" />
+        <point x="16.00" y="15.00" />
     </obstacle>
 
 </scene>

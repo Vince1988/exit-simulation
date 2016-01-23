@@ -5,7 +5,7 @@ package ch.bfh.exit_simulation.util;
  */
 public class Converter {
     private static Converter instance = null;
-    private int scaleFactor = 300;
+    private int scaleFactor;
 
     protected Converter(){
         //defeat instantiation
@@ -35,9 +35,7 @@ public class Converter {
     public double getMillimeter(double pixel){
         return pixel/scaleFactor;
     }
-    public int getPixelFromMeter(int m){
-        return m*scaleFactor;
-    }
+    public int getPixelFromMeter(double m){  return (int) (m*scaleFactor);}
     public int getPixelFromCentimeter(int cm){
         return cm*scaleFactor/100;
     }
