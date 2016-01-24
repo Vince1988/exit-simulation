@@ -6,10 +6,8 @@ import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.model.Person;
 import ch.bfh.exit_simulation.util.Vector2d;
 
-import javax.sound.sampled.Line;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
@@ -132,41 +130,52 @@ public class PersonController implements Controller {
     }
 
     public void collision(ObstaclePoly obstacle) {
-        List<Line2D> segments = obstacle.getBorderLines();
-//        segments.stream().filter(this::collision).findFirst().ifPresent(segment -> this.person.collided());
+        Vector2d currentPos = this.person.getCurrentPos();
+        Line2D closestLine = obstacle.getClosestLine(currentPos);
 
-        boolean collision = false;
-
-        for (Line2D segment : segments) {
-            if (this.collision(segment)) {
-                this.person.collided();
-                collision = true;
-            }
+        if (obstacle.contains(currentPos)) {
+            this.insideCollision(closestLine);
+            this.person.collided();
+        } else if (this.collision(closestLine)) {
+            this.person.collided();
         }
     }
 
-    private boolean collision(Line2D line) {
-        boolean collision = false;
+    private void insideCollision(Line2D line) {
         Vector2d currentPos = this.person.getCurrentPos();
         int radius = this.person.getRadius();
 
         Vector2d lineP1 = new Vector2d(line.getP1());
         Vector2d lineP2 = new Vector2d(line.getP2());
-
         Vector2d closestPt = Vector2d.getClosestPointOnLine(currentPos, lineP1, lineP2);
 
-        Vector2d distVect = closestPt.sub(currentPos);
+        Vector2d distVect = currentPos.sub(closestPt);
+
+        Vector2d newSpeed = this.person.getSpeed().reflect(lineP2.sub(lineP1));
+        Vector2d correctionVect = closestPt.add(distVect.negate().normalize().scale(radius));
+
+        this.person.setCurrentPos(correctionVect);
+        this.person.setSpeed(newSpeed);
+    }
+
+    private boolean collision(Line2D line) {
+        boolean collision = false;
+
+        Vector2d currentPos = this.person.getCurrentPos();
+        int radius = this.person.getRadius();
+
+        Vector2d lineP1 = new Vector2d(line.getP1());
+        Vector2d lineP2 = new Vector2d(line.getP2());
+        Vector2d closestPt = Vector2d.getClosestPointOnLine(currentPos, lineP1, lineP2);
+
+        Vector2d distVect = currentPos.sub(closestPt);
         double distance = distVect.magnitude();
-        double diff = radius - distance;
 
-        if (diff > 0 && distVect.dot(this.person.getSpeed()) > 0) {
+        if (distance < radius && distVect.dot(this.person.getSpeed()) < 0) {
             Vector2d newSpeed = this.person.getSpeed().reflect(lineP2.sub(lineP1));
+            Vector2d correctionVect = closestPt.add(distVect.normalize().scale(radius));
 
-
-            double length = distVect.magnitude();
-            double d = diff / length;
-
-            this.person.setCurrentPos(currentPos.add(distVect.normalize().scale(d)));
+            this.person.setCurrentPos(correctionVect);
             this.person.setSpeed(newSpeed);
 
             collision = true;

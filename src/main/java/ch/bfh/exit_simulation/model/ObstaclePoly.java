@@ -74,16 +74,28 @@ public class ObstaclePoly extends Polygon implements IObstacle {
      * @return Closest point on polygon.
      */
     public Vector2d getClosestPoint(Vector2d p) {
-        Vector2d closestPoint = Vector2d.ZERO;
+        Line2D line = this.getClosestLine(p);
+        return Vector2d.getClosestPointOnLine(p, new Vector2d(line.getP1()), new Vector2d(line.getP2()));
+    }
+
+    public Line2D getClosestLine(Vector2d p) {
+        Vector2d closestPoint = null;
+        Line2D closestLine = null;
 
         for (Line2D line: getBorderLines()) {
             Vector2d currPoint = Vector2d.getClosestPointOnLine(p, new Vector2d(line.getP1()), new Vector2d(line.getP2()));
 
-            if (p.distance(currPoint) < p.distance(closestPoint))
+            if (closestPoint == null || p.distance(currPoint) < p.distance(closestPoint)) {
                 closestPoint = currPoint;
+                closestLine = line;
+            }
         }
 
-        return closestPoint;
+        return closestLine;
+    }
+
+    public boolean contains(Vector2d p) {
+        return !this.collides(new Line2D.Double(p.getPoint(), this.centerPoint()));
     }
 
     public static List<ObstaclePoly> createDemoObstacles() {
