@@ -97,7 +97,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
 
         if (Boolean.parseBoolean(props.getProperty("renderNavigationLines"))) {
             g.setColor(Renderer.getColorFromName(props.getProperty("navigationLineColor")));
-            getObstacleNavigationLines().forEach(line -> g.draw(line));
+            getObstacleNavigationLines().forEach(g::draw);
         }
 
         g.setColor(Color.BLUE);
@@ -119,8 +119,10 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
             }
         }
 
-        for (Vector2d placement : rndPlacements) {
-            g.drawRect((int) placement.getX(), (int) placement.getY(), 1, 1);
+        if (Boolean.parseBoolean(props.getProperty("renderSpawnPoints", "false"))) {
+            for (Vector2d placement : rndPlacements) {
+                g.drawRect((int) placement.getX(), (int) placement.getY(), 1, 1);
+            }
         }
     }
 
