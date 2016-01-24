@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Vincent Genecand on 21.09.2015.
@@ -31,7 +32,7 @@ import java.util.Set;
 public class GamePanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private Set<Person> persons;
-    private final List<Vector2d> rndPlacements = new ArrayList<>();
+    private final List<Vector2d> spawnPoints = new ArrayList<>();
     public List<IObstacle> obstacles;
     public Exit exit;
     private List<Line2D> obstacleNavLineCache;
@@ -61,6 +62,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
 
         int person_count = Integer.parseInt(props.getProperty("personCount"));
         this.persons.addAll(Person.placeRandomPersons(person_count, this));
+        this.spawnPoints.addAll(this.persons.stream().map(Person::getCurrentPos).collect(Collectors.toList()));
     }
 
     public void update() {
@@ -72,7 +74,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
 
             // check for exit collision
             if (exit.getDistance(p.getCurrentPos()) < p.getRadius()) {
-                rndPlacements.add(p.placeRandomOnScene(this));
+                spawnPoints.add(p.placeRandomOnScene(this));
             }
 
             PersonController pc = new PersonController(p, this);
@@ -120,7 +122,7 @@ public class GamePanel implements MouseListener, MouseMotionListener, MouseWheel
         }
 
         if (Boolean.parseBoolean(props.getProperty("renderSpawnPoints", "false"))) {
-            for (Vector2d placement : rndPlacements) {
+            for (Vector2d placement : spawnPoints) {
                 g.drawRect((int) placement.getX(), (int) placement.getY(), 1, 1);
             }
         }

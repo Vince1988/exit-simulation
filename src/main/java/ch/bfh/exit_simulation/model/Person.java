@@ -91,7 +91,7 @@ public class Person {
     }
 
     public static List<Person> placeRandomPersons(int amount, GamePanel panel) {
-        int radius = Integer.parseInt(panel.getProps().getProperty("personRadius"));
+        int radius = Integer.parseInt(GamePanel.getProps().getProperty("personRadius"));
 
         ArrayList<Person> persons = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
