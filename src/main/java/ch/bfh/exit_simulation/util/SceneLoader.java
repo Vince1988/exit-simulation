@@ -5,7 +5,6 @@ import ch.bfh.exit_simulation.model.Exit;
 import ch.bfh.exit_simulation.model.IObstacle;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,12 +17,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Shylux on 03.01.2016.
@@ -49,7 +49,7 @@ public class SceneLoader {
     private InputStream getSceneXml() {
         try {
             String sceneFile = GamePanel.getProps().getProperty("scene");
-            InputStream xml = null;
+            InputStream xml;
             if (sceneFile.startsWith("resource:")) {
                 sceneFile = sceneFile.substring("resource:".length());
                 xml = GamePanel.class.getResourceAsStream(sceneFile);
@@ -109,7 +109,7 @@ public class SceneLoader {
                     if (point.getNodeType() != Node.ELEMENT_NODE) continue;
                     String x = getNodeAttr("x", point);
                     String y = getNodeAttr("y", point);
-                    if (point.getLocalName() == "relpoint") { // check if the point is relative or absolute
+                    if ("relpoint".equals(point.getLocalName())) { // check if the point is relative or absolute
                         polyObj.addPoint(new Double(Double.parseDouble(x)*sceneWidth).intValue(),
                                 new Double(Double.parseDouble(y)*sceneHeight).intValue());
                     } else {
@@ -125,9 +125,31 @@ public class SceneLoader {
                     obstacleList.add(polyObj);
                 }
             }
+
+            this.addSceneLimitsAsWalls(obstacleList, sceneWidth, sceneHeight);
         } catch (Exception e) {
             throw new Error(e.getMessage());
         }
+    }
+
+    private void addSceneLimitsAsWalls(List<IObstacle> obstacles, int width, int height) {
+        ObstaclePoly top = new ObstaclePoly();
+        top.addPoint(0,0);
+        top.addPoint(width,0);
+        ObstaclePoly right = new ObstaclePoly();
+        right.addPoint(width,0);
+        right.addPoint(width,height);
+        ObstaclePoly bottom = new ObstaclePoly();
+        bottom.addPoint(width,height);
+        bottom.addPoint(0,height);
+        ObstaclePoly left = new ObstaclePoly();
+        left.addPoint(0,height);
+        left.addPoint(0,0);
+
+        obstacles.add(top);
+        obstacles.add(left);
+        obstacles.add(bottom);
+        obstacles.add(right);
     }
 
     private void validateXml(String xml) throws IOException {

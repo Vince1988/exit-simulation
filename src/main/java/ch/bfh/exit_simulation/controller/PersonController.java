@@ -1,13 +1,11 @@
 package ch.bfh.exit_simulation.controller;
 
 import ch.bfh.exit_simulation.GamePanel;
-import ch.bfh.exit_simulation.SimulationCanvas;
 import ch.bfh.exit_simulation.model.ObstaclePoly;
 import ch.bfh.exit_simulation.model.Person;
 import ch.bfh.exit_simulation.util.Vector2d;
 
 import java.awt.geom.Line2D;
-import java.util.stream.Stream;
 
 /**
  * Created by Vincent Genecand on 05.10.2015.
@@ -41,23 +39,6 @@ public class PersonController implements Controller {
         }
 
         person.setCurrentPos(person.getCurrentPos().add(person.getSpeed()));
-
-        // Bounce at window edges
-        if (person.getCurrentPos().getX() + person.getRadius() >= SimulationCanvas.W) {
-            person.setSpeed(person.getSpeed().reflect(new Vector2d(0, 1)));
-            person.setCurrentPos(new Vector2d(SimulationCanvas.W - person.getRadius(), person.getCurrentPos().getY()));
-        } else if (person.getCurrentPos().getX() - person.getRadius() <= 0) {
-            person.setSpeed(person.getSpeed().reflect(new Vector2d(0, 1)));
-            person.setCurrentPos(new Vector2d(person.getRadius(), person.getCurrentPos().getY()));
-        }
-
-        if (person.getCurrentPos().getY() + person.getRadius() >= SimulationCanvas.H) {
-            person.setSpeed(person.getSpeed().reflect(new Vector2d(1, 0)));
-            person.setCurrentPos(new Vector2d(person.getCurrentPos().getX(), SimulationCanvas.H - person.getRadius()));
-        } else if (person.getCurrentPos().getY() - person.getRadius() <= 0) {
-            person.setSpeed(person.getSpeed().reflect(new Vector2d(1, 0)));
-            person.setCurrentPos(new Vector2d(person.getCurrentPos().getX(), person.getRadius()));
-        }
     }
 
     /**
