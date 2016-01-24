@@ -6,39 +6,39 @@
         <relpoint x="0" y="1" />
     </exit>
     <obstacle>
-        <point x="0" y="150" />
-        <point x="250" y="150" />
-        <point x="350" y="250" />
-        <point x="0" y="250" />
+        <point x="0" y="1.50" />
+        <point x="2.50" y="1.50" />
+        <point x="3.50" y="2.50" />
+        <point x="0" y="2.50" />
     </obstacle>
     <obstacle>
-        <point x="500" y="150" />
-        <point x="450" y="150" />
-        <point x="400" y="250" />
-        <point x="500" y="250" />
+        <point x="5.00" y="1.50" />
+        <point x="4.50" y="1.50" />
+        <point x="4.00" y="2.50" />
+        <point x="5.00" y="2.50" />
     </obstacle>
     <obstacle>
-        <point x="0" y="350" />
-        <point x="50" y="350" />
-        <point x="150" y="450" />
-        <point x="0" y="450" />
+        <point x="0" y="3.50" />
+        <point x="0.50" y="3.50" />
+        <point x="1.50" y="4.50" />
+        <point x="0" y="4.50" />
     </obstacle>
     <obstacle>
-        <point x="500" y="350" />
-        <point x="350" y="350" />
-        <point x="200" y="450" />
-        <point x="500" y="450" />
+        <point x="5.00" y="3.50" />
+        <point x="3.50" y="3.50" />
+        <point x="2.00" y="4.50" />
+        <point x="5.00" y="4.50" />
     </obstacle>
     <obstacle>
-        <point x="0" y="500" />
-        <point x="50" y="500" />
-        <point x="350" y="900" />
-        <point x="0" y="900" />
+        <point x="0" y="5.00" />
+        <point x="0.50" y="5.00" />
+        <point x="3.50" y="9.00" />
+        <point x="0" y="9.00" />
     </obstacle>
     <obstacle>
-        <point x="500" y="500" />
-        <point x="450" y="500" />
-        <point x="370" y="900" />
-        <point x="500" y="900" />
+        <point x="5.00" y="5.00" />
+        <point x="4.50" y="5.00" />
+        <point x="3.70" y="9.00" />
+        <point x="5.00" y="9.00" />
     </obstacle>
 </scene>

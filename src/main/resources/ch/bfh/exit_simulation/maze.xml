@@ -5,33 +5,101 @@
         <relpoint x=".51" y=".51" />
         <relpoint x=".49" y=".51" />
     </exit>
+
+
     <obstacle>
-        <point x="490" y="440" />
-        <point x="490" y="450" />
-        <point x="450" y="450" />
-        <point x="450" y="550" />
-        <point x="550" y="550" />
-        <point x="550" y="450" />
-        <point x="510" y="450" />
-        <point x="510" y="440" />
-        <point x="560" y="440" />
-        <point x="560" y="560" />
-        <point x="440" y="560" />
-        <point x="440" y="440" />
+        <point x="4.9" y="4.4" />
+        <point x="4.9" y="4.5" />
+        <point x="4.5" y="4.5" />
+        <point x="4.5" y="4.4" />
     </obstacle>
     <obstacle>
-        <point x="400" y="650" />
-        <point x="400" y="660" />
-        <point x="300" y="660" />
-        <point x="300" y="340" />
-        <point x="710" y="340" />
-        <point x="710" y="660" />
-        <point x="600" y="660" />
-        <point x="600" y="650" />
-        <point x="700" y="650" />
-        <point x="700" y="350" />
-        <point x="310" y="350" />
-        <point x="310" y="650" />
+        <point x="4.5" y="4.5" />
+        <point x="4.5" y="5.5" />
+        <point x="4.6" y="5.5" />
+        <point x="4.6" y="4.5" />
+    </obstacle>
+    <obstacle>
+        <point x="4.5" y="5.5" />
+        <point x="4.5" y="5.6" />
+        <point x="5.5" y="5.6" />
+        <point x="5.5" y="5.5" />
+    </obstacle>
+    <obstacle>
+        <point x="5.5" y="5.6" />
+        <point x="5.5" y="4.5" />
+        <point x="5.6" y="4.5" />
+        <point x="5.6" y="5.6" />
+    </obstacle>
+    <obstacle>
+        <point x="5.1" y="4.4" />
+        <point x="5.1" y="4.5" />
+        <point x="5.6" y="4.5" />
+        <point x="5.6" y="4.4" />
     </obstacle>
 
+
+
+    <obstacle>
+        <point x="3.5" y="3.5" />
+        <point x="3.5" y="6.5" />
+        <point x="3.6" y="6.5" />
+        <point x="3.6" y="3.5" />
+    </obstacle>
+    <obstacle>
+        <point x="3.5" y="3.5" />
+        <point x="3.5" y="3.6" />
+        <point x="6.5" y="3.6" />
+        <point x="6.5" y="3.5" />
+    </obstacle>
+    <obstacle>
+        <point x="6.5" y="6.5" />
+        <point x="6.5" y="3.5" />
+        <point x="6.6" y="3.5" />
+        <point x="6.6" y="6.5" />
+    </obstacle>
+    <obstacle>
+        <point x="5.1" y="6.4" />
+        <point x="5.1" y="6.5" />
+        <point x="6.6" y="6.5" />
+        <point x="6.6" y="6.4" />
+    </obstacle>
+    <obstacle>
+        <point x="4.9" y="6.4" />
+        <point x="4.9" y="6.5" />
+        <point x="3.5" y="6.5" />
+        <point x="3.5" y="6.4" />
+    </obstacle>
+
+
+    <obstacle>
+        <point x="2.9" y="2.4" />
+        <point x="2.9" y="2.5" />
+        <point x="2.5" y="2.5" />
+        <point x="2.5" y="2.4" />
+    </obstacle>
+    <obstacle>
+        <point x="2.5" y="2.5" />
+        <point x="2.5" y="7.5" />
+        <point x="2.6" y="7.5" />
+        <point x="2.6" y="2.5" />
+    </obstacle>
+    <obstacle>
+        <point x="2.5" y="7.5" />
+        <point x="2.5" y="7.6" />
+        <point x="7.5" y="7.6" />
+        <point x="7.5" y="7.5" />
+    </obstacle>
+    <obstacle>
+        <point x="7.5" y="7.6" />
+        <point x="7.5" y="2.5" />
+        <point x="7.6" y="2.5" />
+        <point x="7.6" y="7.6" />
+    </obstacle>
+    <obstacle>
+        <point x="7.1" y="2.4" />
+        <point x="7.1" y="2.5" />
+        <point x="7.6" y="2.5" />
+        <point x="7.6" y="2.4" />
+    </obstacle>
 </scene>
